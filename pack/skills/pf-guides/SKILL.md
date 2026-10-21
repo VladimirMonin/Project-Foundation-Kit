@@ -2,8 +2,8 @@
 name: pf-guides
 description: Create or update user guides from real scenarios and implemented interfaces. Cover getting started, task steps, reference and troubleshooting; maintain primary-language guides, RU/EN translations and revision lag. Use for user-visible changes or release guide readiness, not invented capabilities or automatic translation of all internal docs.
 metadata:
-  version: "0.1.0"
-  updated: "2026-10-19"
+  version: "0.2.0"
+  updated: "2026-10-21"
 ---
 
 # Guide a real user task
@@ -14,6 +14,10 @@ Use for a changed user journey, command, screen, prerequisite or supported limit
 including release translations. Do not generate guides from a proposed mockup as if
 it shipped, translate the whole engineering corpus, or require Figma/image generation
 to finish a useful text guide. This skill neither runs product operations nor publishes.
+
+A future interface needs [pf-ui-design](../pf-ui-design/SKILL.md), not a guide
+claiming it shipped. Route there only for a design need; describe the implemented
+journey here, without automatically adding another skill/agent to the task.
 
 ## Inputs
 
@@ -52,7 +56,9 @@ languages. Read the project's guide instruction or adapt the
 7. Check source-to-step fidelity, supported failure path, both language links, unique
    IDs, revision/state consistency, examples and image labels. Run the project's
    verified documentation check; report raw results and unrun product/visual checks.
-   Add the nearest guide entry and pass the frozen result for independent review.
+   Add the nearest guide entry and follow the project's acceptance policy in
+   [lifecycle](../../references/lifecycle.md#владелец-приёмки-и-повторных-проверок),
+   without inventing another reviewer or waiving required review.
 
 ## Missing input / finish
 

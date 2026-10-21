@@ -64,7 +64,12 @@ symlinks, missing/unreadable/не-UTF-8 или >1 MiB text input дают **exit
 явной выборки. Fragment проверяется только в parsed Markdown corpus, иначе
 `not_checked`. Поддерживаются обычные inline/image links с простым destination,
 angle-bracket destination и полные/collapsed reference links, ATX headings и explicit
-HTML `id`. Fenced/inline code и footnotes не принимаются за ссылки. Нет полного
+HTML `id`. Литералы внутри fenced blocks и code spans не создают ссылок,
+definitions, HTML IDs или wikilink diagnostics. Inline code в подписи настоящей
+ссылки не отменяет цель. Reference-ключи сохраняют исходный текст (включая backticks)
+и casefold, а не rendered label. Содержимое inline code сохраняется в ATX slug.
+Code spans сопоставляют полные backtick runs равной длины, в том числе multiline;
+это ограниченное подмножество, не вся GFM-нормализация. Footnotes не считаются ссылками. Нет полного
 CommonMark parser: nested destinations/brackets, shortcut references, Setext,
 autolinks и renderer-specific anchors остаются вне гарантии; wikilinks отмечаются
 `not_checked`. External URLs считаются, но сеть не запускается. Для переносимого
@@ -90,7 +95,8 @@ path/code/severity/message, `translations`, `external_links_not_checked`, `limit
 - **1** — ошибки выбранных документов; исправить свою действительную delta.
 - **2** — input/dependency/usage failure; не считать пустым успехом.
 
-`--pack` проверяет ровно пять именованных навыков, их name/resource links, native
+`--pack` проверяет ровно шесть именованных навыков: `pf-bootstrap`, `pf-plan`, `pf-maintain`,
+`pf-quality`, `pf-guides`, `pf-ui-design`, их name/resource links, native
 Markdown и `.base`, наличие/UTF-8 templates. Не тестирует загрузку навыка клиентом,
 выполнение проектной процедуры, истинность архитектуры или отрисовку Obsidian.
 Проверка privacy/log outputs принадлежит [качеству](../references/quality.md),

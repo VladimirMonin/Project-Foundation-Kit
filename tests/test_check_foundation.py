@@ -113,6 +113,96 @@ class FoundationChecks(unittest.TestCase):
         self.put("docs/a.md", document(body="[missing](absent.md) [ref][undefined]"))
         self.assertTrue({"link.missing", "link.reference"}.issubset(self.codes(self.check({"docs/a.md": "authoring"}))))
 
+    def test_code_labels_inline_images_and_angle_destinations(self):
+        for label in ('`README`', 'Файл `README`', '``a ` b``'):
+            for syntax in ('[{label}](target.md)', '![{label}](<target.md>)'):
+                with self.subTest(label=label, syntax=syntax):
+                    target = self.root / 'target.md'
+                    target.unlink(missing_ok=True)
+                    self.put('a.md', document(body=syntax.format(label=label)))
+                    report = self.check({'a.md': 'authoring'})
+                    self.assertEqual(report['exit_code'], 1, report)
+                    self.assertIn('link.missing', self.codes(report, 'error'))
+                    self.put('target.md', '# Existing, unselected\n')
+                    self.assertEqual(self.check({'a.md': 'authoring'})['exit_code'], 0)
+
+    def test_code_reference_labels_resolve_and_keep_text_identity(self):
+        cases = (
+            ('[`README`][doc]', '[doc]'),
+            ('[`README`][]', '[`README`]'),
+            ('[plain][`DOC`]', '[`doc`]'),
+            ('[Mixed `KEY`][]', '[mixed `key`]'),
+        )
+        for link, definition in cases:
+            with self.subTest(link=link):
+                (self.root / 'target.md').unlink(missing_ok=True)
+                self.put('a.md', document(body=f'{link}\n{definition}: target.md\n'))
+                report = self.check({'a.md': 'authoring'})
+                self.assertEqual(report['exit_code'], 1, report)
+                self.assertIn('link.missing', self.codes(report))
+                self.assertNotIn('link.reference', self.codes(report))
+                self.put('target.md', '# Existing\n')
+                self.assertEqual(self.check({'a.md': 'authoring'})['exit_code'], 0)
+                self.put('a.md', document(body=link))
+                self.assertIn('link.reference', self.codes(self.check({'a.md': 'authoring'})))
+        # Colliding rendered labels must not alias: reference keys are source text.
+        self.put('a.md', document(body='[`a`][] [`b`][] [x][] [`x`][] [Text `A`][] [Text `B`][]\n'
+                 '[`a`]: a.md\n[`b`]: missing-b.md\n[x]: a.md\n[`x`]: missing-x.md\n'
+                 '[text `a`]: a.md\n[text `b`]: missing-text-b.md\n'))
+        report = self.check({'a.md': 'authoring'})
+        missing = [f['message'] for f in report['findings'] if f['code'] == 'link.missing']
+        self.assertEqual(len(missing), 3, report)
+        for name in ('missing-b.md', 'missing-x.md', 'missing-text-b.md'):
+            self.assertTrue(any(name in message for message in missing), report)
+
+    def test_literal_code_full_delimiter_runs_do_not_create_syntax(self):
+        literals = ('`[x](missing.md) [x][bad] [[wiki]] <i id="fake">`',
+                    '``single ` [x](missing.md) [x][bad] [[wiki]] <i id="fake">``',
+                    '``literal ``` [x](missing.md) [x][bad] [[wiki]] <i id="fake">``',
+                    '`literal `` [x](missing.md) [x][bad] [[wiki]] <i id="fake">`',
+                    '```md\n[x](missing.md) [x][bad] [[wiki]] <i id="fake">\n```',
+                    '~~~md\n[x](missing.md) [x][bad] [[wiki]] <i id="fake">\n~~~')
+        for literal in literals:
+            with self.subTest(literal=literal):
+                self.put('a.md', document(body=literal))
+                report = self.check({'a.md': 'authoring'})
+                self.assertEqual(report['findings'], [], report)
+                self.put('a.md', document(body=literal + '\n[anchor](#fake)'))
+                self.assertIn('link.anchor', self.codes(self.check({'a.md': 'authoring'})))
+        # Definition opener inside a multiline code span is not a definition.
+        self.put('a.md', document(body='``literal `\n[key]: a.md\n``\n[real][key]'))
+        self.assertIn('link.reference', self.codes(self.check({'a.md': 'authoring'})))
+        for fence in ('```', '~~~'):
+            self.put('a.md', document(body=f'{fence}md\n[key]: a.md\n{fence}\n[real][key]'))
+            self.assertIn('link.reference', self.codes(self.check({'a.md': 'authoring'})))
+        self.put('a.md', document(body='[[outside]] `[[inside]]`'))
+        report = self.check({'a.md': 'authoring'})
+        self.assertEqual(sum(f['code'] == 'link.wiki' for f in report['findings']), 1)
+
+    def test_code_headings_keep_words_duplicates_and_real_negative_control(self):
+        self.put('a.md', document(body='[one](b.md#export) [two](b.md#export-1) '
+                 '[mixed](b.md#запуск-pytest) [double](b.md#a--b) [id](b.md#real)'))
+        self.put('b.md', document(identity='B', body='## `export`\n## `export`\n'
+                 '## Запуск `pytest`\n## ``a ` b``\n<i id="real">\n'))
+        corpus = {'a.md': 'authoring', 'b.md': 'authoring'}
+        self.assertEqual(self.check(corpus)['exit_code'], 0)
+        self.put('a.md', document(body='[bad](b.md#genuinely-missing)'))
+        self.assertIn('link.anchor', self.codes(self.check(corpus), 'error'))
+
+    def test_code_fragment_unselected_body_is_not_read(self):
+        self.put('a.md', document(body='[`B`](b.md#export)'))
+        self.put('b.md', '## `export`\n')
+        loaded = []
+        original = API['read_text']
+        def observed(path):
+            loaded.append(path.name)
+            return original(path)
+        with patch.dict(API['Checker'].load.__globals__, read_text=observed):
+            report = self.check({'a.md': 'authoring'})
+        self.assertEqual(loaded, ['a.md'])
+        self.assertEqual(report['exit_code'], 0)
+        self.assertIn('link.anchor_scope', self.codes(report, 'not_checked'))
+
     def test_native_outputs_and_required_instruction_trigger_cannot_keep_tokens(self):
         self.put("AGENTS.md", "# {{project_name}}")
         self.put("profile.yaml", 'name: "{{project_name}}"\n')
@@ -240,7 +330,7 @@ class FoundationChecks(unittest.TestCase):
         (pack / "references/quality.md").write_text("# Synthetic resource\n", encoding="utf-8")
         (pack / "tools").mkdir()
         shutil.copyfile(CHECKER, pack / "tools/check_foundation.py")
-        for name in ("pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides"):
+        for name in ("pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design"):
             folder = pack / "skills" / name
             folder.mkdir(parents=True)
             (folder / "SKILL.md").write_text(f'---\nname: {name}\ndescription: "Synthetic relocation skill"\n---\n[resource](../../references/quality.md)\n', encoding="utf-8")
@@ -249,6 +339,83 @@ class FoundationChecks(unittest.TestCase):
         (pack / "references/quality.md").unlink()
         result = subprocess.run([sys.executable, "-I", "-B", str(pack / "tools/check_foundation.py"), "--pack"], cwd=KIT, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 1)
+
+    def test_pack_exact_six_names_and_cli_input_failures(self):
+        # Independent literal expectation: never import the implementation's set.
+        expected = {'pf-bootstrap', 'pf-plan', 'pf-maintain', 'pf-quality', 'pf-guides', 'pf-ui-design'}
+        self.assertEqual({p.name for p in (KIT / 'pack/skills').iterdir() if p.is_dir()}, expected)
+        pack = self.root / 'полный pack'
+        shutil.copytree(KIT / 'pack', pack)
+        self.assertEqual(self.cli('--pack', pack).returncode, 0)
+        ui = pack / 'skills/pf-ui-design'
+        ui.rename(self.root / 'held-ui')
+        result = self.cli('--pack', pack)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertEqual(json.loads(result.stdout)['exit_code'], 2)
+        (self.root / 'held-ui').rename(ui)
+        (pack / 'skills/unexpected-seventh').mkdir()
+        self.assertEqual(self.cli('--pack', pack).returncode, 2)
+        (pack / 'skills/unexpected-seventh').rmdir()
+        (ui / 'SKILL.md').unlink()
+        self.assertEqual(self.cli('--pack', pack).returncode, 2)
+
+    def test_full_actual_pack_relocation_includes_methods_platforms_and_notices(self):
+        pack = self.root / 'перенос всего pack'
+        shutil.copytree(KIT / 'pack', pack)
+        required = ('references/methods/contract-evolution.md', 'references/methods/change-impact.md',
+                    'references/methods/behavior-regression.md', 'skills/pf-ui-design/SKILL.md',
+                    'skills/pf-ui-design/references/web-react.md',
+                    'skills/pf-ui-design/references/desktop-pyside6.md',
+                    'templates/documents/ui-design.md.tmpl', 'LICENSE', 'UPSTREAM.md', 'THIRD_PARTY_NOTICES.md')
+        for path in required:
+            self.assertEqual((pack / path).read_bytes(), (KIT / 'pack' / path).read_bytes())
+        command = [sys.executable, '-I', '-B', str(pack / 'tools/check_foundation.py'), '--pack']
+        result = subprocess.run(command, cwd=self.root.parent, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(len(report['findings']), 3, report)
+        self.assertTrue(all(f['code'] == 'base.not_rendered' and f['severity'] == 'not_checked' for f in report['findings']))
+        (pack / 'skills/pf-ui-design/references/web-react.md').unlink()
+        result = subprocess.run(command, cwd=self.root.parent, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('link.missing', self.codes(json.loads(result.stdout)))
+
+    def test_minimal_example_and_populated_ui_form_use_output_grammar(self):
+        import re
+        minimal = (KIT / 'pack/references/minimal-adoption.md').read_text(encoding='utf-8')
+        blocks = re.findall(r'```markdown\n(.*?)\n```', minimal, re.S)
+        self.assertEqual(len(blocks), 2)
+        self.put('AGENTS.md', blocks[0])
+        self.put('docs/engineering.md', blocks[1])
+        text = (KIT / 'pack/templates/documents/ui-design.md.tmpl').read_text(encoding='utf-8')
+        values = {
+            'document_id': 'EXAMPLE-UI', 'surface_name': 'Выбор результата', 'date': '2026-10-21',
+            'user_result_and_bounded_design_scope': 'Учебное design-решение текущего результата без GUI claim.',
+            'user_job_primary_action_and_link_to_source_requirement': 'Задача: показать текущий выбранный результат; главное действие — выбор.',
+            'current_vs_proposed_behavior_and_design_implementation_or_review_mode': 'Режим design: предложено сохранять B при позднем A, не реализовано.',
+            'platform_surface_owner_constraints_and_non_goals': 'Desktop-панель; существующий operation owner; без API/зависимостей.',
+            'existing_components_tokens_and_ui_rules': 'Сохраняются существующие theme и ResultPanel.',
+            'operation_or_data_contract_reference_without_schema_duplication': '[Локальный owner решений](engineering.md#архитектура). Это учебный маршрут, не схема API.',
+            'target_window_or_viewport_conditions_and_reason': 'Предложены resize/scale условия проекта; фактические значения ещё не установлены.',
+            'information_hierarchy_layout_and_reason': 'Текущий выбор и результат перед вторичными деталями для быстрого чтения.',
+            'content_density_long_labels_focus_keyboard_and_applicable_accessibility': 'Длинная подпись переносится; tab order и return focus требуют native проверки.',
+            'relevant_state': 'B после A', 'trigger': 'B завершился, затем поздний A',
+            'visible_result': 'Остаётся B', 'next_action': 'Следующий выбор по существующему owner-у',
+            'cancellation_retry_stale_result_and_existing_owner_only_when_applicable': 'Stale решает существующая identity; не добавлять второй manager. Cancel не обещан.',
+            'inapplicable_states_reason_distinct_from_unavailable_test_access': 'Permission неприменим только в учебном входе без авторизации; native доступ отсутствует, это NOT_RUN.',
+            'bounded_behavior_rendered_interaction_source_and_native_or_browser_checks': 'Design/source review отдельно от behavioral и rendered/interaction.',
+            'existing_check_commands_or_explicitly_unknown_not_invented': 'Команда GUI пока неизвестна; не выдумывать запуск.',
+            'actual_artifact_revision_conditions_observations_or_not_run_limits': 'Учебный draft; native/visual NOT_RUN, нет GUI входа. Проверяется только паспорт формы.',
+            'authorized_ui_change_scope_and_contract_dependencies': 'Разрешён только этот учебный текст, реализация не выполнена.',
+            'affected_guides_or_no_guide_impact_reason': 'Реальный интерфейс не изменён, guide-impact отсутствует.',
+            'remaining_decision_owner_local_acceptance_policy_or_finished_scope': 'Owner учебного проекта определит native проверку и приёмку.',
+        }
+        text = '\n'.join(line for line in text.splitlines() if not line.startswith('>'))
+        text = API['TOKEN'].sub(lambda match: values[match[0][2:-2]], text)
+        self.put('docs/ui.md', text)
+        report = self.check({'AGENTS.md': 'native', 'docs/engineering.md': 'authoring', 'docs/ui.md': 'authoring'})
+        self.assertEqual(report['exit_code'], 0, report)
+        self.assertEqual(report['findings'], [], report)
 
     def test_quality_templates_adapt_to_valid_draft_outputs(self):
         corpus = {}

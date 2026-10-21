@@ -2,8 +2,8 @@
 name: pf-maintain
 description: Maintain project knowledge after a bounded change. Update or create documents and owner instructions, preserve history, repair navigation and check metadata without silently changing policy. Use for documentation impact, stale contracts, instruction sync or archival work, not product implementation or a whole-corpus audit.
 metadata:
-  version: "0.1.0"
-  updated: "2026-10-19"
+  version: "0.2.0"
+  updated: "2026-10-21"
 ---
 
 # Maintain affected knowledge
@@ -26,7 +26,10 @@ as guidance, not permission to replace local policy.
 
 ## Procedure
 
-1. Find the current owner of the affected knowledge. Distinguish accepted requirement,
+1. Find the current owner of the affected knowledge. Is it a rule, a map, current
+   state, or durable decision history? These are four roles, not four required files;
+   state stays in the existing tracker, and one document may cover several roles.
+   Distinguish accepted requirement,
    observed implementation, proposed change and actual evidence. Read only relevant
    sources; establish root/freshness before relying on indexed absence.
 2. Choose one: update the existing owner, link to it, create a missing distinct
@@ -43,13 +46,18 @@ as guidance, not permission to replace local policy.
 5. Repair nearest entry/catalog and actual client route where in scope. A link is
    not proof of automatic injection. On replacement preserve origin, replacement
    scope, outstanding obligations and historical evidence via the
-   [archive frame](../../templates/documents/archive-frame.md.tmpl).
+   [archive frame](../../templates/documents/archive-frame.md.tmpl). For a significant
+   intentional removal, keep its rationale, replacement responsibility owner and
+   conditions for reconsideration in existing decision history/archive. Do not
+   resurrect it by ignoring that reason or create a second deletion ledger.
 6. Check filled properties/types/IDs/local links, no unresolved required placeholders,
    current/proposed separation and affected guides/translations. Use the project's
    verified check command; see [quality](../../references/quality.md) for evidence
    limits. Optional [Obsidian views](../../templates/obsidian/README.md) select the
    same Markdown; do not create another wiki or require GUI.
-7. Freeze the completed delta for the project's independent review/save procedure.
+7. Follow the project's review/save policy under
+   [lifecycle](../../references/lifecycle.md#владелец-приёмки-и-повторных-проверок);
+   do not appoint another review layer or waive required independence.
    Return actual paths, sufficient checks/raw exits, limitations and exact remainder.
    Promote useful temporary conclusions into the knowledge owner, not an entire run log.
 

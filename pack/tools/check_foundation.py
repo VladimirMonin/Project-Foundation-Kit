@@ -101,8 +101,8 @@ def frontmatter(text):
     return value, "\n".join(lines[end + 1:])
 
 
-def visible(text):
-    """Common fenced blocks and inline code are not Markdown links/headings."""
+def unfenced(text):
+    """Remove common fenced blocks before role-specific inline processing."""
     result, fence = [], None
     for line in text.splitlines():
         match = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
@@ -114,19 +114,61 @@ def visible(text):
                 fence = None
             continue
         if fence is None:
-            result.append(re.sub(r"(`+).*?\1", "", line))
+            result.append(line)
     return "\n".join(result)
 
 
+def code_spans(text):
+    """Pair complete, equally long backtick runs; unmatched runs stay literal.
+
+    This bounded subset supports multiline spans, not all CommonMark constructs.
+    Return offsets so link labels keep their original reference-key identity.
+    """
+    runs = list(re.finditer(r"`+", text))
+    following, next_equal = {}, {}
+    for index in range(len(runs) - 1, -1, -1):
+        size = len(runs[index][0])
+        if size in next_equal:
+            following[index] = next_equal[size]
+        next_equal[size] = index
+    spans, index = [], 0
+    while index < len(runs):
+        end = following.get(index)
+        if end is None:
+            index += 1
+        else:
+            spans.append((runs[index].start(), runs[end].end(), len(runs[index][0])))
+            index = end + 1
+    return spans
+
+
+def mask_code(text, spans):
+    chars = list(text)
+    for start, end, _ in spans:
+        chars[start:end] = ["\n" if c == "\n" else " " for c in text[start:end]]
+    return "".join(chars)
+
+
+def visible(text):
+    """Literal-free view for syntax that cannot contain inline code (IDs/wiki)."""
+    text = unfenced(text)
+    return mask_code(text, code_spans(text))
+
+
 def local_links(text):
-    text = visible(text)
+    text = unfenced(text)
+    syntax = mask_code(text, code_spans(text))
     definitions = {}
-    for match in re.finditer(r"(?m)^\s{0,3}\[([^\]\n]+)\]:\s*(?:<([^>]+)>|(\S+))", text):
-        if not match[1].startswith("^"):
+    for match in re.finditer(r"(?m)^[ \t]{0,3}\[([^\]\n]+)\]:\s*(?:<([^>]+)>|(\S+))", text):
+        opener = match.start() + match[0].index("[")
+        if syntax[opener] == "[" and not match[1].startswith("^"):
             definitions[match[1].casefold()] = match[2] or match[3]
-    targets = [m[1] or m[2] for m in re.finditer(r"!?\[[^\]\n]+\]\(\s*(?:<([^>\n]+)>|([^\s()]+))(?:\s+\"[^\"]*\")?\s*\)", text)]
+    targets = [m[1] or m[2] for m in re.finditer(r"!?\[[^\]\n]+\]\(\s*(?:<([^>\n]+)>|([^\s()]+))(?:\s+\"[^\"]*\")?\s*\)", text)
+               if syntax[m.start()] != " "]
     missing = []
     for match in re.finditer(r"!?\[([^\]\n]+)\]\[([^\]\n]*)\]", text):
+        if syntax[match.start()] == " ":
+            continue
         key = (match[2] or match[1]).casefold()
         if key in definitions:
             targets.append(definitions[key])
@@ -136,11 +178,17 @@ def local_links(text):
 
 
 def anchors(text):
-    text = visible(text)
-    result = set(re.findall(r"\bid=[\"']([^\"']+)[\"']", text))
+    text = unfenced(text)
+    syntax = mask_code(text, code_spans(text))
+    result = set(re.findall(r"\bid=[\"']([^\"']+)[\"']", syntax))
     used = {}
     for match in re.finditer(r"(?m)^#{1,6}\s+(.+?)\s*#*\s*$", text):
-        slug = re.sub(r"[^\w\- ]", "", match[1].lower()).replace(" ", "-")
+        if syntax[match.start()] != "#":
+            continue
+        heading = match[1]
+        for start, end, size in reversed(code_spans(heading)):
+            heading = heading[:start] + heading[start + size:end - size] + heading[end:]
+        slug = re.sub(r"[^\w\- ]", "", heading.lower()).replace(" ", "-")
         count = used.get(slug, 0)
         used[slug] = count + 1
         result.add(slug + (f"-{count}" if count else ""))
@@ -384,10 +432,10 @@ def pack_corpus(root):
         if file.is_file() and relative.endswith(TEXT_SUFFIXES):
             bounded(root, relative)
             result[relative] = "templates" if relative.endswith(".tmpl") else "native"
-    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides"}
+    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design"}
     actual = {p.name for p in (root / "skills").iterdir() if p.is_dir()}
     if actual != expected or any(not (root / "skills" / name / "SKILL.md").is_file() for name in expected):
-        raise InputError("Pack needs exactly the five named pf-* skill directories and their SKILL.md")
+        raise InputError("Pack needs exactly the six named pf-* skill directories and their SKILL.md")
     return result
 
 

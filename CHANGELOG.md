@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+
+- Repair bounded Markdown parsing on the real Checker path: code-formatted link/reference labels retain targets and textual identity; ATX anchors retain code words; literals remain excluded with complete equal-length backtick delimiters.
+- Make acceptance follow receiving-project policy without weakening required independent review; add a complete minimal adoption example and clarify optional forms/profile YAML.
+- Add conditional contract-evolution, change-impact and behavior-regression methods; document roles and significant intentional removals without a new ledger.
+- Deliver standalone pf-ui-design with web/React and desktop/PySide6 references, optional plan form, strict six-skill checks and full-pack relocation tests.
+- Preserve pinned ECC/UIZZE provenance and both MIT notices; no donor runtime, hooks, services or new dependencies.
+- Independently accept the implementation, two clean fixture applications and bounded corrected-Stage1/final AD-01–12 runs; retain native/visual and external-production limits without claiming benchmark superiority. See [ACCEPTANCE](docs/ACCEPTANCE.md); no release/tag is implied by this source revision.
+
 ## 0.1.0
 
 - Five cooperating skills for bootstrap, planning, knowledge maintenance, quality and guides.

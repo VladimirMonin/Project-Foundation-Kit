@@ -1,4 +1,4 @@
-# Metadata and authoring contract — Kit 0.1.0
+# Metadata and authoring contract — Kit 0.2.0
 
 This is the single shared schema for **adapted durable project documents**, not a
 runtime configuration or a schema for every Markdown file. Project-native formats

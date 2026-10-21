@@ -1,6 +1,6 @@
-# Project Foundation Kit · 0.1.0
+# Project Foundation Kit · 0.2.0
 
-Самостоятельный комплект для начала и сопровождения инженерной документации. Это не архив исходного продукта, не runtime framework и не автоматический менеджер слияния. Переносится **весь этот каталог**, вместе с `skills/`, `references/`, `templates/`, `integrations/` и поставляемыми `tools/`.
+Самостоятельный методический комплект для инженерных решений, проверки поведения, сопровождения знаний и проектирования интерфейсов. Это не архив исходного продукта, не runtime framework и не автоматический менеджер слияния. Переносится **весь этот каталог**, вместе с `skills/`, `references/`, `templates/`, `integrations/` и поставляемыми `tools/`.
 
 ## Начать за один короткий маршрут
 
@@ -19,16 +19,22 @@
 | [pf-maintain](skills/pf-maintain/SKILL.md) | Сопровождение знания/инструкций | Обновить/create/link/archive/no-impact без второго канона |
 | [pf-quality](skills/pf-quality/SKILL.md) | Выбор/оценка тестов и диагностики | Достаточное evidence, безопасная изоляция и полезный/приватный вывод |
 | [pf-guides](skills/pf-guides/SKILL.md) | Пользовательские руководства/переводы | Фактический сценарий, версия/ограничения, связанные языковые редакции |
+| [pf-ui-design](skills/pf-ui-design/SKILL.md) | Экран, форма, диалог или переход | Ограниченное UI-решение/разрешённая дельта; состояния и честные source/rendered/interaction/behavioral observations |
 
-Одна сессия применяет нужные навыки последовательно. Пять навыков не пять обязательных подагентов.
+Одна сессия применяет только нужные навыки. Шесть навыков не шесть обязательных подагентов.
 
-## Общие источники, а не пять пересказов
+## Общие источники, а не шесть пересказов
 
 - [lifecycle](references/lifecycle.md): соразмерность, пять типов изменений, знания/приёмка/finish, повтор и обновление.
 - [metadata](references/metadata.md): единые типы/kind/status, паспорт, языковые связи и native-format исключения.
 - [quality](references/quality.md): уровни доказательства, проверки и ограничения инструмента.
 
+При подходящей задаче: [эволюция контрактов](references/methods/contract-evolution.md), [влияние изменения](references/methods/change-impact.md), [поведенческая регрессия](references/methods/behavior-regression.md). UI читает только [web/React](skills/pf-ui-design/references/web-react.md) или [desktop/PySide6](skills/pf-ui-design/references/desktop-pyside6.md), не оба приложения для каждого проекта.
+
 Философия объясняет причины/компромиссы; инструкция — действия по trigger; шаблон — форму; навык — применение; заполненный принятый документ принадлежит проекту. Принятый план не реализованная функция, дата текста не проверка кода, green Markdown не product PASS.
+
+Минимальное внедрение: [полный учебный пример CLI](references/minimal-adoption.md).
+Роли основ/инструкций можно совместить в одном достаточном документе; отдельный YAML-профиль необязателен.
 
 ## Формы по потребности
 
@@ -39,7 +45,7 @@
 | Корень/профиль | [AGENTS](templates/AGENTS.md.tmpl), [project-profile](templates/project-profile.yaml.tmpl) |
 | Четыре философии | [проект](templates/foundation/project-philosophy.md.tmpl), [архитектура](templates/foundation/architecture-principles.md.tmpl), [тестирование](templates/foundation/testing-strategy.md.tmpl), [наблюдаемость](templates/foundation/observability-policy.md.tmpl) |
 | Практические инструкции | [разработка](templates/instructions/development.md.tmpl), [планирование](templates/instructions/planning.md.tmpl), [документация](templates/instructions/documentation.md.tmpl), [создание инструкций](templates/instructions/instruction-authoring.md.tmpl), [тесты](templates/instructions/testing.md.tmpl), [логи](templates/instructions/logging.md.tmpl), [Git](templates/instructions/git.md.tmpl), [руководства](templates/instructions/guides.md.tmpl) |
-| Сценарий/план | [история](templates/documents/user-story.md.tmpl), [сценарий](templates/documents/scenario.md.tmpl), [план функции](templates/documents/feature-plan.md.tmpl), [ADR](templates/documents/adr.md.tmpl), [ограниченное исследование](templates/documents/research.md.tmpl) |
+| Сценарий/план | [необязательное UI-решение](templates/documents/ui-design.md.tmpl), [история](templates/documents/user-story.md.tmpl), [сценарий](templates/documents/scenario.md.tmpl), [план функции](templates/documents/feature-plan.md.tmpl), [ADR](templates/documents/adr.md.tmpl), [ограниченное исследование](templates/documents/research.md.tmpl) |
 | Текущее знание | [docs index](templates/documents/docs-index.md.tmpl), [архитектура](templates/documents/current-architecture.md.tmpl), [контракт](templates/documents/interface-contract.md.tmpl), [паспорт возможностей](templates/documents/capability-passport.md.tmpl) |
 | Поддержка/закрытие | [разбор бага](templates/documents/bug-analysis.md.tmpl), [техзаметка](templates/documents/technical-note.md.tmpl), [значимая запись](templates/documents/activity-record.md.tmpl), [handoff](templates/documents/handoff.md.tmpl), [проверка/закрытие](templates/documents/verification.md.tmpl), [release notes](templates/documents/release-notes.md.tmpl), [архив](templates/documents/archive-frame.md.tmpl) |
 | Руководство/новый навык/views | [формы руководств](templates/guides/), [форма проектного навыка](templates/skills/), [Obsidian](templates/obsidian/README.md) |
@@ -60,8 +66,8 @@ Markdown работает без открытого Obsidian. `.base` — пре
 
 Следовать [quality](references/quality.md), [фактическому интерфейсу checker-а](tools/README.md) и проверенным командам целевого проекта. Его `--pack` по умолчанию определяет pack относительно самого файла, не cwd; проектный запуск требует явного project/corpus. Шаблон проверяется как форма, заполненный результат — по своей authoring/native грамматике. Не импортировать приложение, читать рабочие secrets/runtime данные или менять index ради проверки документов. Изоляция до первого возможного обращения к рабочим настройкам. Различать написано, выполнено, пропущено, отменено, blocked и независимо принято.
 
-Перед завершением: актуальны затронутые знания/руководства/переводы либо обоснован no-impact; достаточные checks/limits; независимое принятие и разрешённое сохранение; один ясный итог и остановка. Отложенный обязательный перевод не становится актуальным от смены даты. Разрешение публиковать данные принимающего проекта не возникает автоматически от использования комплекта.
+Перед завершением: актуальны затронутые знания/руководства/переводы либо обоснован no-impact; достаточные checks/limits; приёмка по [местной политике](references/lifecycle.md#владелец-приёмки-и-повторных-проверок) и разрешённое сохранение; один ясный итог и остановка. Отложенный обязательный перевод не становится актуальным от смены даты. Разрешение публиковать данные принимающего проекта не возникает автоматически от использования комплекта.
 
 ## Лицензия
 
-Комплект распространяется под [MIT](LICENSE). При переносе и распространении существенных частей сохраняйте файл LICENSE и уведомление об авторских правах. Лицензия комплекта сама по себе не меняет лицензию принимающего проекта или внешних материалов.
+Комплект распространяется под [MIT](LICENSE). При переносе и распространении сохраняйте LICENSE, [UPSTREAM](UPSTREAM.md) и [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md), включая оба MIT notices ECC/UIZZE. Выбранные процедуры адаптированы, полный ECC/runtime не включён. Лицензия комплекта сама по себе не меняет лицензию принимающего проекта или внешних материалов.
