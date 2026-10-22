@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+## 0.2.1 · 2026-10-22
+
+- Link both companion projects without duplicating their versions or implying automatic installation.
+- Clarify that installing an accepted release differs from developing one; reuse applicable evidence and reserve live experiments for material external-contract uncertainty.
+- Distinguish implemented diagnostic limits, cache freshness and actual retention; document missing rotation as a concrete remainder instead of adding a logger.
+
 ## 0.2.0
 
 - Repair bounded Markdown parsing on the real Checker path: code-formatted link/reference labels retain targets and textual identity; ATX anchors retain code words; literals remain excluded with complete equal-length backtick delimiters.
