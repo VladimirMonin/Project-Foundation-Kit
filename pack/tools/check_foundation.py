@@ -432,10 +432,10 @@ def pack_corpus(root):
         if file.is_file() and relative.endswith(TEXT_SUFFIXES):
             bounded(root, relative)
             result[relative] = "templates" if relative.endswith(".tmpl") else "native"
-    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design"}
+    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design", "pf-command-first"}
     actual = {p.name for p in (root / "skills").iterdir() if p.is_dir()}
     if actual != expected or any(not (root / "skills" / name / "SKILL.md").is_file() for name in expected):
-        raise InputError("Pack needs exactly the six named pf-* skill directories and their SKILL.md")
+        raise InputError("Pack needs exactly the seven named pf-* skill directories and their SKILL.md")
     return result
 
 

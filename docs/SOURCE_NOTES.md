@@ -20,6 +20,23 @@ The original kit contains general-purpose instructions and adaptable forms. Vers
 
 Live documentation may advance. Integration documents distinguish explicit reading, selected resource access and client discovery; one does not prove the others.
 
+## Original knowledge library, 0.3.0
+
+The owner supplied five command-first documents and one FigCraft guide and explicitly
+requested their public inclusion without rewriting. All six are copied byte-for-byte
+into `pack/references/`; their names, frontmatter, examples, source dates and original
+links are retained. The portable inventory, hashes and recipient routes are recorded
+once in [UPSTREAM](../pack/UPSTREAM.md). The attached integration proposal guided the
+small navigation/procedure layer; the proposal and private source locations are not
+redistributed. No FigCraft code, binaries, fonts, screenshots or third-party skill
+package is included. Primary technical sources remain links with their own terms.
+
+The FigCraft guide is a version-bound account of 0.10.0, including reported historical
+observations, not a new PFK product or GUI test. The converter article is an architectural
+design, not a delivered application. Publication does not promote source metadata into
+accepted project facts. Real-development application of this addition is left to the
+user; source integrity, package checks and independent review are separate evidence.
+
 ## Distribution
 
 No private source paths, personal contacts, session records, environment files, databases, logs or source-product code are included. No complete third-party skill package is redistributed; selected adapted portions retain the notices above. The owner's material is distributed under [MIT](../LICENSE); linked products and primary React/W3C/Qt documentation retain their own licenses. Those technical docs are references and original summaries, not bulk copied text/code/assets. MIT ECC does not relicense Qt documentation.

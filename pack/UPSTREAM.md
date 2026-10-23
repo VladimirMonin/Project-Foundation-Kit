@@ -1,4 +1,4 @@
-# Происхождение выбранных процедур · PFK 0.2.0
+# Происхождение процедур и библиотеки знаний · PFK 0.3.0
 
 Это каноническая карта адаптации, переносимая вместе с pack. Выбранные процедуры
 переведены и содержательно переработаны, **не написаны «с нуля»**. Полные сторонние
@@ -47,6 +47,44 @@ ECC [check-evidence.js](https://github.com/affaan-m/ECC/blob/30b68924ae9729159f4
 и [root manifest](https://github.com/affaan-m/ECC/blob/30b68924ae9729159f44326aa3134b1d9d67c0e2/package.json)
 подключают не только skills: extension содержит lifecycle hooks/common-rule injection.
 Ни адаптер, ни commands/extensions/config/memory не копируются и не устанавливаются.
+
+## Полные исходные материалы · 0.3.0
+
+Владелец предоставил эти шесть документов для открытой публикации в составе PFK.
+Это оригинальная библиотека знаний, не сторонний skill-пак: имена, YAML, текст,
+примеры и ссылки сохранены **побайтно**, без сокращения или исправления исходников.
+К ним применима [лицензия комплекта](LICENSE); внешние источники и продукты имеют
+свои условия, их код, бинарники и графические ресурсы не включены.
+
+Пути и SHA-256 фиксируют исходную редакцию, не доказывают её поведение:
+
+| Исходный документ / расположение | SHA-256 |
+|---|---|
+| [00_README.md](references/architecture/command-first/00_README.md) | `78eaccb46f521037842850e1926a222d1f3a53032dcb4384d444b1114b59be59` |
+| [01_Command_First_Introduction.md](references/architecture/command-first/01_Command_First_Introduction.md) | `ebd34e1749bbc4bc47fd250bf10363bd9e97223bae762781315ed8f733f709dd` |
+| [02_Command_First_Architecture_and_Contracts.md](references/architecture/command-first/02_Command_First_Architecture_and_Contracts.md) | `cc052f1190a06f7305e73fd68d5ce9a1ea84e43aa7cf9d20746019f43bf168a9` |
+| [03_Command_First_Architecture_Variants.md](references/architecture/command-first/03_Command_First_Architecture_Variants.md) | `a31c2bdb7cfaa82f09ad756a5da9f5504225dce2d3702634e8487760d491542c` |
+| [04_Command_First_Image_Converter_Architecture.md](references/architecture/command-first/04_Command_First_Image_Converter_Architecture.md) | `5e192de874844862046c9d737ceda63fc7cb61bc024118c63d8553dcc5ebf0b8` |
+| [FigCraft_AI_GUI_Design_Guide_RU.md](references/ui/figcraft/FigCraft_AI_GUI_Design_Guide_RU.md) | `008d346da4df289f84799661bf2dee74258a02cf691484541ace819511b071cd` |
+
+[pf-command-first](skills/pf-command-first/SKILL.md) и короткий [вход в серию](references/architecture/command-first/README.md)
+выбирают нужные разделы, не загружают все статьи для каждого изменения.
+[FigCraft-маршрут](skills/pf-ui-design/references/figcraft-handoff.md) расширяет существующий
+UI-навык только при выборе этого редактора. Схемы операций, контракты и критерии
+качества остаются у действующих владельцев, второго реестра нет.
+
+Собственные шапки статей — описание источника, не accepted-статус документов проекта.
+ImageConverter — архитектурный пример, не готовая реализация. Руководство FigCraft
+отражает редакцию **0.10.0**, а его описанный эксперимент не новый runtime-тест PFK.
+Свежие возможности выбранной версии проверяются при применении. Оригинальные
+Obsidian-ссылки оставлены вместе с обычной Markdown-навигацией; воспроизведение
+их отображения и практическое применение новой методики — отдельные проверки.
+
+В исходной статье 04 сохранены четыре HTML-комментария со служебными метками цитат
+первоначального разбора. Это неприменимые вне источника указатели, не действующие
+ссылки на поставляемые ресурсы; для использования методики они не нужны. Исключение
+из прежнего запрета таких меток связано только с путём и точным SHA-256 этого снимка,
+не отменяет проверку секретов, личных данных и остальных файлов.
 
 ## Первичные технические ссылки, не заимствованный payload
 

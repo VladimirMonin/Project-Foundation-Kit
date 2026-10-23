@@ -44,6 +44,8 @@ symlinks, missing/unreadable/не-UTF-8 или >1 MiB text input дают **exit
   проверяются. YAML anchors/aliases/merge keys запрещены общей схемой. Смена словаря
   требует согласованного обновления metadata.md и checker-а, не локальной поблажки.
 - `native`: AGENTS и обычные package references не получают authoring-паспорт.
+  Это относится и к шести сохранённым оригиналам command-first/FigCraft: их исходная
+  YAML-шапка остаётся нативной частью справки, а не принятой PFK-архитектурой.
   `SKILL.md` независимо проверяет native name/description/optional metadata и
   совпадение каталога. `.yaml/.yml` — safe parse, `.base` — только YAML shape views/
   filters, **не выполнение predicates или GUI**.
@@ -95,10 +97,22 @@ path/code/severity/message, `translations`, `external_links_not_checked`, `limit
 - **1** — ошибки выбранных документов; исправить свою действительную delta.
 - **2** — input/dependency/usage failure; не считать пустым успехом.
 
-`--pack` проверяет ровно шесть именованных навыков: `pf-bootstrap`, `pf-plan`, `pf-maintain`,
-`pf-quality`, `pf-guides`, `pf-ui-design`, их name/resource links, native
-Markdown и `.base`, наличие/UTF-8 templates. Не тестирует загрузку навыка клиентом,
-выполнение проектной процедуры, истинность архитектуры или отрисовку Obsidian.
+`--pack` проверяет ровно семь именованных навыков: `pf-bootstrap`, `pf-plan`, `pf-maintain`,
+`pf-quality`, `pf-guides`, `pf-ui-design`, `pf-command-first`, их name/resource links, native
+Markdown и `.base`, наличие/UTF-8 templates. Отсутствие любого именованного каталога
+или его `SKILL.md`, лишний каталог либо подмена имени дают exit2.
+
+Контрольные суммы шести оригиналов, сохранность полного payload при переносе и
+конечный набор wiki-целей/заголовков серии проверяют отдельные тесты репозитория,
+не новый режим checker-а. Оригиналы выбираются по
+[карте command-first](../references/architecture/command-first/README.md) и
+[маршруту FigCraft](../skills/pf-ui-design/references/figcraft-handoff.md).
+Общий checker по-прежнему сообщает `link.wiki: not_checked`: конечный тест серии
+не обещает поддержку произвольных wiki-ссылок или их отрисовку.
+
+Checker не тестирует загрузку навыка клиентом, выполнение проектной процедуры,
+истинность архитектуры или отрисовку Obsidian/GUI. Примеры и наблюдения в оригиналах
+не являются свежими runtime-доказательствами PFK.
 Проверка privacy/log outputs принадлежит [качеству](../references/quality.md),
 а не структурному checker-у. Повторное агентское развёртывание проверяется реальным
 исполнителем, не hash-equality или генератором шаблонов.

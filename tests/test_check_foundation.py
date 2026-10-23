@@ -1,6 +1,8 @@
 """Focused validator tests; these are NOT agent-guided bootstrap acceptance."""
+import hashlib
 import json
 from pathlib import Path
+import re
 import runpy
 import shutil
 import subprocess
@@ -13,6 +15,19 @@ KIT = Path(__file__).resolve().parents[1]
 CHECKER = KIT / "pack/tools/check_foundation.py"
 API = runpy.run_path(str(CHECKER), run_name="foundation_checker_tests")
 SCRATCH = KIT / "artifacts/quality"
+# Original source-byte digests, recorded before import on 2026-10-23.
+# These portable witnesses do not read the source machine or prove runtime claims.
+SOURCE_SHA256 = {
+    "references/architecture/command-first/00_README.md": "78eaccb46f521037842850e1926a222d1f3a53032dcb4384d444b1114b59be59",
+    "references/architecture/command-first/01_Command_First_Introduction.md": "ebd34e1749bbc4bc47fd250bf10363bd9e97223bae762781315ed8f733f709dd",
+    "references/architecture/command-first/02_Command_First_Architecture_and_Contracts.md": "cc052f1190a06f7305e73fd68d5ce9a1ea84e43aa7cf9d20746019f43bf168a9",
+    "references/architecture/command-first/03_Command_First_Architecture_Variants.md": "a31c2bdb7cfaa82f09ad756a5da9f5504225dce2d3702634e8487760d491542c",
+    "references/architecture/command-first/04_Command_First_Image_Converter_Architecture.md": "5e192de874844862046c9d737ceda63fc7cb61bc024118c63d8553dcc5ebf0b8",
+    "references/ui/figcraft/FigCraft_AI_GUI_Design_Guide_RU.md": "008d346da4df289f84799661bf2dee74258a02cf691484541ace819511b071cd",
+}
+# Four nonsecret opaque citation comments belong to this exact source snapshot.
+FILECITE_SNAPSHOT = "references/architecture/command-first/04_Command_First_Image_Converter_Architecture.md"
+PORTABLE_PRIVATE_MARKERS = ("Whisper-Voice-Machine", "C:/PY/", "C:\\\\Users\\\\", "WVM_DEV")
 
 
 def document(identity="EXAMPLE-NOTE", kind="reference", status="draft", extra="", body="# Note\nSynthetic fixture.\n"):
@@ -42,6 +57,39 @@ class FoundationChecks(unittest.TestCase):
 
     def cli(self, *args):
         return subprocess.run([sys.executable, "-I", "-B", str(CHECKER), *map(str, args)], cwd=self.root, capture_output=True, text=True, encoding="utf-8", timeout=30)
+
+    def synthetic_pack(self):
+        pack = self.root / "перенос пакета"
+        self.put("перенос пакета/references/quality.md", "# Synthetic resource\n")
+        (pack / "tools").mkdir()
+        shutil.copyfile(CHECKER, pack / "tools/check_foundation.py")
+        for name in ("pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design", "pf-command-first"):
+            self.put(f"перенос пакета/skills/{name}/SKILL.md", f'---\nname: {name}\ndescription: "Synthetic relocation skill"\n---\n[resource](../../references/quality.md)\n')
+        return pack
+
+    def assert_series_wiki_targets(self, bodies):
+        # Finite original-series witness: [[stem#plain ATX heading|optional label]]
+        # or [[#heading]]. No renderer, aliases, block IDs, embeds or path inference.
+        headings, visible = {}, {}
+        for stem, body in bodies.items():
+            visible[stem] = API["visible"](body)
+            headings[stem] = set(re.findall(r"(?m)^#{1,6}\s+(.+?)\s*#*\s*$", visible[stem]))
+        counts = {}
+        for stem, text in visible.items():
+            pattern = r"\[\[([^\[\]\n]+)\]\]"
+            remaining = re.sub(pattern, "", text)
+            self.assertNotIn("[[", remaining, f"NOT VERIFIED: unsupported series wiki syntax in {stem}")
+            self.assertNotIn("]]", remaining, f"NOT VERIFIED: unsupported series wiki syntax in {stem}")
+            links = list(re.finditer(pattern, text))
+            counts[stem] = len(links)
+            for link in links:
+                value = re.fullmatch(r"([A-Za-z0-9_]+)?#([^#|^\[\]\n]+)(?:\|[^|\[\]\n]+)?", link[1])
+                self.assertIsNotNone(value, f"NOT VERIFIED: unsupported series wiki syntax: {link[0]}")
+                self.assertFalse(link.start() and text[link.start() - 1] == "!", f"NOT VERIFIED: wiki embed: {link[0]}")
+                target, heading = value[1] or stem, value[2]
+                self.assertIn(target, bodies, f"Missing series target: {target}")
+                self.assertIn(heading, headings[target], f"Missing series heading: {target}#{heading}")
+        return counts
 
     def test_valid_document_and_native_grammar(self):
         self.put("docs/note.md", document())
@@ -325,60 +373,158 @@ class FoundationChecks(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
 
     def test_pack_relocation_checks_actual_resources_not_cwd(self):
-        pack = self.root / "перенос пакета"
-        (pack / "references").mkdir(parents=True)
-        (pack / "references/quality.md").write_text("# Synthetic resource\n", encoding="utf-8")
-        (pack / "tools").mkdir()
-        shutil.copyfile(CHECKER, pack / "tools/check_foundation.py")
-        for name in ("pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design"):
-            folder = pack / "skills" / name
-            folder.mkdir(parents=True)
-            (folder / "SKILL.md").write_text(f'---\nname: {name}\ndescription: "Synthetic relocation skill"\n---\n[resource](../../references/quality.md)\n', encoding="utf-8")
+        pack = self.synthetic_pack()
         result = subprocess.run([sys.executable, "-I", "-B", str(pack / "tools/check_foundation.py"), "--pack"], cwd=KIT, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         (pack / "references/quality.md").unlink()
         result = subprocess.run([sys.executable, "-I", "-B", str(pack / "tools/check_foundation.py"), "--pack"], cwd=KIT, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 1)
 
-    def test_pack_exact_six_names_and_cli_input_failures(self):
+    def test_pack_exact_seven_names_and_cli_input_failures(self):
         # Independent literal expectation: never import the implementation's set.
-        expected = {'pf-bootstrap', 'pf-plan', 'pf-maintain', 'pf-quality', 'pf-guides', 'pf-ui-design'}
-        self.assertEqual({p.name for p in (KIT / 'pack/skills').iterdir() if p.is_dir()}, expected)
-        pack = self.root / 'полный pack'
-        shutil.copytree(KIT / 'pack', pack)
+        expected = {'pf-bootstrap', 'pf-plan', 'pf-maintain', 'pf-quality', 'pf-guides', 'pf-ui-design', 'pf-command-first'}
+        pack = self.synthetic_pack()
+        self.assertEqual({p.name for p in (pack / 'skills').iterdir() if p.is_dir()}, expected)
         self.assertEqual(self.cli('--pack', pack).returncode, 0)
-        ui = pack / 'skills/pf-ui-design'
-        ui.rename(self.root / 'held-ui')
-        result = self.cli('--pack', pack)
-        self.assertEqual(result.returncode, 2, result.stdout)
-        self.assertEqual(json.loads(result.stdout)['exit_code'], 2)
-        (self.root / 'held-ui').rename(ui)
-        (pack / 'skills/unexpected-seventh').mkdir()
-        self.assertEqual(self.cli('--pack', pack).returncode, 2)
-        (pack / 'skills/unexpected-seventh').rmdir()
-        (ui / 'SKILL.md').unlink()
-        self.assertEqual(self.cli('--pack', pack).returncode, 2)
+
+        def invalid_pack():
+            result = self.cli('--pack', pack)
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            report = json.loads(result.stdout)
+            self.assertEqual(report['exit_code'], 2)
+            self.assertIn('input.invalid', self.codes(report, 'error'))
+
+        for name in sorted(expected):
+            with self.subTest(missing_directory=name):
+                folder = pack / 'skills' / name
+                folder.rename(self.root / 'held-skill')
+                try:
+                    invalid_pack()
+                finally:
+                    (self.root / 'held-skill').rename(folder)
+            with self.subTest(missing_skill_file=name):
+                skill = folder / 'SKILL.md'
+                skill.rename(self.root / 'held-SKILL.md')
+                try:
+                    invalid_pack()
+                finally:
+                    (self.root / 'held-SKILL.md').rename(skill)
+        extra = pack / 'skills/unexpected-eighth'
+        extra.mkdir()
+        invalid_pack()
+        # Seven directories with a substituted name are not the seven named skills.
+        command_first = pack / 'skills/pf-command-first'
+        command_first.rename(self.root / 'held-command-first')
+        invalid_pack()
+        (self.root / 'held-command-first').rename(command_first)
+        extra.rmdir()
+        self.assertEqual(self.cli('--pack', pack).returncode, 0)
+
+    def test_original_snapshots_keep_source_bytes_and_native_grammar(self):
+        pack = KIT / 'pack'
+        corpus = {}
+        for path, digest in SOURCE_SHA256.items():
+            with self.subTest(path=path):
+                self.assertEqual(hashlib.sha256((pack / path).read_bytes()).hexdigest(), digest)
+            corpus[path] = 'native'
+        checker = API['Checker'](pack, corpus, 'pack')
+        report = checker.run()
+        self.assertEqual(report['checked'], 6)
+        self.assertEqual(report['exit_code'], 0, report)
+        self.assertEqual(checker.docs, {})  # Original YAML is not the PFK note passport.
+        self.assertEqual(set(checker.bodies), set(SOURCE_SHA256))
+        self.assertTrue(all(f['code'] == 'link.wiki' and f['severity'] == 'not_checked' for f in report['findings']), report)
+
+    def test_finite_series_wiki_witness_has_real_negative_and_literal_controls(self):
+        bodies = {'00_README': '## Map\n[[#Map]] [[01_Command_First_Introduction#Result|open]]\n'
+                  '`[[missing#Absent]]`\n``literal ` [[missing#Absent]]``\n'
+                  '```md\n[[missing#Absent]]\n## Fake\n```\n'
+                  '~~~md\n[[missing#Absent]]\n~~~\n',
+                  '01_Command_First_Introduction': '## Result\n[[#Result|self]]\n'}
+        self.assertEqual(self.assert_series_wiki_targets(bodies), {'00_README': 2, '01_Command_First_Introduction': 1})
+        for link, message in (('[[missing#Result]]', 'Missing series target'),
+                              ('[[01_Command_First_Introduction#Absent]]', 'Missing series heading'),
+                              ('[[#Fake]]', 'Missing series heading')):
+            with self.subTest(link=link), self.assertRaisesRegex(AssertionError, message):
+                self.assert_series_wiki_targets({**bodies, '00_README': bodies['00_README'] + link})
+        for link in ('[[unterminated', '[[01_Command_First_Introduction]]', '[[#^block]]',
+                     '[[#Map#nested]]', '[[#Map|one|two]]', '![[#Map]]'):
+            with self.subTest(link=link), self.assertRaisesRegex(AssertionError, 'NOT VERIFIED'):
+                self.assert_series_wiki_targets({**bodies, '00_README': bodies['00_README'] + link})
+
+    def test_all_original_series_wiki_targets_and_headings(self):
+        bodies = {Path(path).stem: (KIT / 'pack' / path).read_text(encoding='utf-8')
+                  for path in SOURCE_SHA256 if path.startswith('references/architecture/')}
+        self.assertEqual(self.assert_series_wiki_targets(bodies), {
+            '00_README': 7, '01_Command_First_Introduction': 12,
+            '02_Command_First_Architecture_and_Contracts': 18,
+            '03_Command_First_Architecture_Variants': 16,
+            '04_Command_First_Image_Converter_Architecture': 17,
+        })
+
+    def test_new_routes_reach_original_snapshots_and_delivery_references(self):
+        routes = {
+            'skills/pf-bootstrap/SKILL.md': ('../pf-command-first/SKILL.md',),
+            'skills/pf-plan/SKILL.md': ('../pf-command-first/SKILL.md',),
+            'skills/pf-command-first/SKILL.md': ('../../references/architecture/command-first/README.md', 'references/cli-first-delivery.md'),
+            'references/architecture/command-first/README.md': tuple(Path(path).name for path in SOURCE_SHA256 if path.startswith('references/architecture/')),
+            'skills/pf-ui-design/SKILL.md': ('references/figcraft-handoff.md',),
+            'skills/pf-ui-design/references/figcraft-handoff.md': ('../../../references/ui/figcraft/FigCraft_AI_GUI_Design_Guide_RU.md', '../../pf-command-first/SKILL.md'),
+        }
+        for path, expected in routes.items():
+            with self.subTest(path=path):
+                links, _ = API['local_links']((KIT / 'pack' / path).read_text(encoding='utf-8'))
+                self.assertTrue(set(expected).issubset({link.split('#', 1)[0] for link in links}), (path, expected, links))
 
     def test_full_actual_pack_relocation_includes_methods_platforms_and_notices(self):
         pack = self.root / 'перенос всего pack'
         shutil.copytree(KIT / 'pack', pack)
+        expected = {'pf-bootstrap', 'pf-plan', 'pf-maintain', 'pf-quality', 'pf-guides', 'pf-ui-design', 'pf-command-first'}
+        self.assertEqual({p.name for p in (pack / 'skills').iterdir() if p.is_dir()}, expected)
+        for name in expected:
+            self.assertTrue((pack / 'skills' / name / 'SKILL.md').is_file(), name)
+        original_files = {p.relative_to(KIT / 'pack').as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                          for p in (KIT / 'pack').rglob('*') if p.is_file()}
+        relocated_files = {p.relative_to(pack).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                           for p in pack.rglob('*') if p.is_file()}
+        self.assertEqual(relocated_files, original_files)
         required = ('references/methods/contract-evolution.md', 'references/methods/change-impact.md',
                     'references/methods/behavior-regression.md', 'skills/pf-ui-design/SKILL.md',
                     'skills/pf-ui-design/references/web-react.md',
                     'skills/pf-ui-design/references/desktop-pyside6.md',
+                    'skills/pf-command-first/SKILL.md', 'skills/pf-command-first/references/cli-first-delivery.md',
+                    'references/architecture/command-first/README.md',
+                    'skills/pf-ui-design/references/figcraft-handoff.md', *SOURCE_SHA256,
                     'templates/documents/ui-design.md.tmpl', 'LICENSE', 'UPSTREAM.md', 'THIRD_PARTY_NOTICES.md')
         for path in required:
             self.assertEqual((pack / path).read_bytes(), (KIT / 'pack' / path).read_bytes())
+        classified = API['pack_corpus'](pack)
+        for path, digest in SOURCE_SHA256.items():
+            self.assertEqual(hashlib.sha256((pack / path).read_bytes()).hexdigest(), digest)
+            self.assertEqual(classified[path], 'native')
         command = [sys.executable, '-I', '-B', str(pack / 'tools/check_foundation.py'), '--pack']
         result = subprocess.run(command, cwd=self.root.parent, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(len(report['findings']), 3, report)
-        self.assertTrue(all(f['code'] == 'base.not_rendered' and f['severity'] == 'not_checked' for f in report['findings']))
-        (pack / 'skills/pf-ui-design/references/web-react.md').unlink()
-        result = subprocess.run(command, cwd=self.root.parent, capture_output=True, text=True, timeout=30)
-        self.assertEqual(result.returncode, 1)
-        self.assertIn('link.missing', self.codes(json.loads(result.stdout)))
+        expected_findings = {(f'templates/obsidian/{name}.base', 'base.not_rendered', 'not_checked')
+                             for name in ('Documents', 'Scenarios', 'Guides')}
+        expected_findings.update((path, 'link.wiki', 'not_checked') for path in SOURCE_SHA256 if path.startswith('references/architecture/'))
+        self.assertEqual(sorted((f['path'], f['code'], f['severity']) for f in report['findings']), sorted(expected_findings), report)
+        for path in ('skills/pf-ui-design/references/web-react.md',
+                     'skills/pf-command-first/references/cli-first-delivery.md',
+                     'references/architecture/command-first/00_README.md',
+                     'references/ui/figcraft/FigCraft_AI_GUI_Design_Guide_RU.md'):
+            with self.subTest(missing_relocated_resource=path):
+                file = pack / path
+                saved = file.read_bytes()
+                file.unlink()
+                try:
+                    result = subprocess.run(command, cwd=self.root.parent, capture_output=True, text=True, timeout=30)
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    findings = json.loads(result.stdout)['findings']
+                    self.assertTrue(any(f['code'] == 'link.missing' and f['message'] == f'Missing local target: {path}' for f in findings), findings)
+                finally:
+                    file.write_bytes(saved)
 
     def test_minimal_example_and_populated_ui_form_use_output_grammar(self):
         import re
@@ -438,16 +584,48 @@ class FoundationChecks(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), "Hello, Example!")
 
+    def assert_portable_text(self, path, raw):
+        text = raw.decode("utf-8")
+        for marker in PORTABLE_PRIVATE_MARKERS:
+            self.assertFalse(marker in text, f"Forbidden portable marker {marker!r}: {path}")
+        exact_snapshot = (path == FILECITE_SNAPSHOT
+                          and hashlib.sha256(raw).hexdigest() == SOURCE_SHA256[FILECITE_SNAPSHOT])
+        self.assertTrue("filecite" not in text or exact_snapshot,
+                        f"Unexpected filecite outside exact original snapshot: {path}")
+
     def test_portable_text_has_no_source_project_or_machine_identity(self):
-        for file in (KIT / "pack").rglob("*"):
+        pack = KIT / "pack"
+        for file in pack.rglob("*"):
             if file.is_file() and file.suffix in {".md", ".tmpl", ".base", ".txt", ".py"}:
-                text = file.read_text(encoding="utf-8")
-                with self.subTest(path=file.relative_to(KIT)):
-                    self.assertNotIn("Whisper-Voice-Machine", text)
-                    self.assertNotIn("C:/PY/", text)
-                    self.assertNotIn("C:\\\\Users\\\\", text)
-                    self.assertNotIn("WVM_DEV", text)
-                    self.assertNotIn("filecite", text)
+                path = file.relative_to(pack).as_posix()
+                with self.subTest(control="actual-pack", path=path):
+                    self.assert_portable_text(path, file.read_bytes())
+
+        snapshot = (pack / FILECITE_SNAPSHOT).read_bytes()
+        self.assertTrue(b"filecite" in snapshot, "Original snapshot must exercise the citation exception")
+        self.assert_portable_text(FILECITE_SNAPSHOT, snapshot)
+        # Same digest outside the one path must not inherit the exception.
+        other_paths = ("README.md", "references/architecture/command-first/README.md",
+                       "skills/pf-command-first/SKILL.md",
+                       "references/ui/" + Path(FILECITE_SNAPSHOT).name,
+                       *(path for path in SOURCE_SHA256 if path != FILECITE_SNAPSHOT))
+        for path in other_paths:
+            with self.subTest(control="filecite-other-path", path=path):
+                with self.assertRaisesRegex(AssertionError, "Unexpected filecite"):
+                    self.assert_portable_text(path, snapshot)
+        # Correct path alone cannot admit any changed bytes or added citation.
+        for change, raw in (("changed-byte", snapshot + b"\n"),
+                            ("extra-citation", snapshot + b"\n<!-- filecite -->\n"),
+                            ("replacement", b"<!-- filecite -->\n")):
+            with self.subTest(control="filecite-mutated-snapshot", change=change):
+                with self.assertRaisesRegex(AssertionError, "Unexpected filecite"):
+                    self.assert_portable_text(FILECITE_SNAPSHOT, raw)
+        # Every other sentinel remains active, including at the original path.
+        for marker in PORTABLE_PRIVATE_MARKERS:
+            for path, raw in (("README.md", b"# Synthetic control\n"), (FILECITE_SNAPSHOT, snapshot)):
+                with self.subTest(control="private-marker", path=path, marker=marker):
+                    with self.assertRaisesRegex(AssertionError, "Forbidden portable marker"):
+                        self.assert_portable_text(path, raw + b"\n" + marker.encode("utf-8"))
         # Selected static sentinels only; not a proof that all private data is absent.
 
     def test_two_input_fixtures_preserve_local_manual_rules(self):

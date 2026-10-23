@@ -17,6 +17,22 @@ from `__file__`. Temporary tests/relocations live only under `artifacts/quality/
 and are cleaned by their owners. No index writes. See
 [checker contract and raw exits](../pack/tools/README.md).
 
+Полный прогон требует завершённого согласованного `pack/`. Во время параллельного
+редактирования положительный и отказные контракты семи навыков проверяются отдельно,
+без чтения всего payload:
+
+```text
+.venv/Scripts/python.exe -I -B -m unittest discover -s tests -p test_check_foundation.py -k test_pack_relocation_checks_actual_resources_not_cwd -v
+.venv/Scripts/python.exe -I -B -m unittest discover -s tests -p test_check_foundation.py -k test_pack_exact_seven_names_and_cli_input_failures -v
+```
+
+Первый тест использует синтетический пакет с семью именами, включая
+`pf-command-first`, затем удаляет настоящий ресурс и требует exit1. Он пригоден
+для RED на прежней реализации с шестью навыками и GREEN на новой. Второй независимо
+проверяет точные имена, отсутствие каждого каталога/`SKILL.md`, лишний восьмой и
+подменённое имя при сохранении семи каталогов: для каждого отказа нужен exit2.
+Это не полная приёмка интегрированного пакета.
+
 ## What automated checks actually establish
 
 `test_check_foundation.py` tests valid typed documents/native grammar, malformed
@@ -33,12 +49,47 @@ not implement/evaluate Bases expressions or prove Obsidian rendering. Static
 contamination sentinels are a finite check, not universal secret detection.
 A passing validator test is not evidence that an agent follows the skills.
 
-The exact six names are independently asserted. Missing `pf-ui-design`, an extra
-seventh directory, and a directory without SKILL each require native CLI exit 2.
-Full-pack relocation includes both UI platform references, all three methods,
-LICENSE/provenance/notices. Populated minimal and UI examples are checked as
-native/authoring outputs, not hidden under templates. This is grammar evidence,
-not application or GUI acceptance. Additional finite exercises:
+Семь имён независимо заданы литералами; названия не берутся из реализации.
+Переносится весь фактический пакет в каталог с кириллицей и пробелами; совпадают
+полный инвентарь файлов и их байты. Сохраняются обе UI-платформы, три метода,
+LICENSE/provenance/notices, новый архитектурный навык и справка по CLI-first-поставке, маршрут
+FigCraft и все шесть оригиналов. Отдельно удерживаются ссылки новых входов к
+нужной справке. После переноса удаление web-ресурса, CLI-first-справки, исходной
+карты `00_README.md` или оригинала FigCraft требует exit1 с конкретным `link.missing`.
+Допустимые `not_checked` в полном пакете перечислены точно: три Bases и пять
+исходных документов с wiki-ссылками, без ослабления проверки до одного exit0.
+
+Шесть литеральных SHA-256, снятых с оригиналов **2026-10-23** до импорта,
+проверяют сохранность исходных байтов, включая YAML, код и ссылки. Для этих
+Markdown-справок используется `native`, не паспорт PFK-заметки; импорт не превращает
+их содержание в принятую архитектуру. Тесты не требуют исходного хранилища на
+машине получателя.
+
+Sentinel `filecite` допускает только неизменённый
+`pack/references/architecture/command-first/04_Command_First_Image_Converter_Architecture.md`
+с SHA-256 `5e192de874844862046c9d737ceda63fc7cb61bc024118c63d8553dcc5ebf0b8`.
+Четыре исходных HTML-комментария содержат непрозрачные библиографические метки,
+не секреты, доступные ресурсы или runtime-доказательства; они сохраняются побайтно.
+В `test_portable_text_has_no_source_project_or_machine_identity` отказные контроли
+проверяют копию тех же байтов по другому пути, изменённый снимок и добавленную метку.
+Все остальные project/path sentinels действуют для каждого файла, включая оригинал;
+их отдельные отказы также исполняются. Диагностика содержит маркер и путь, не тело
+документа. Это узкое исключение, не отключение privacy-проверок каталога.
+
+Конечный wiki-тест читает все пять оригиналов серии, исключает code spans/fences
+и проверяет каждую наблюдаемую цель и точный текст обычного ATX-заголовка.
+Поддерживаются только имеющиеся формы `[[stem#heading|label]]` и `[[#heading]]`
+с необязательной подписью; пропавшая цель/заголовок дают отказ. Незнакомый синтаксис
+явно останавливает свидетельство с `NOT VERIFIED`, а не считается проверенным.
+Отрицательные контроли охватывают отсутствующие цели, заголовок только в code fence,
+незавершённый/неподдерживаемый wiki-синтаксис и embed. Общий checker сохраняет
+`link.wiki: not_checked`; Obsidian, block IDs, alias resolution и произвольный
+Markdown-renderer не реализуются. Это проверка сохранности и ссылок, не исполнение
+примеров, FigCraft или моделей и не доказательство практического применения.
+
+Populated minimal and UI examples are checked as native/authoring outputs, not
+hidden under templates. This is grammar evidence, not application or GUI acceptance.
+Additional finite exercises:
 [AD-01–AD-12](ADAPTATION_CASES.md); author observations, independently reviewed
 clean applications/comparison and remaining qualification: [ACCEPTANCE](../docs/ACCEPTANCE.md).
 
@@ -55,7 +106,7 @@ clean applications/comparison and remaining qualification: [ACCEPTANCE](../docs/
 | 7 | Primary guide change affects translation | Revision tests: equal dates, mismatch warning, false-current error | Agent performs content review; real pair marked outdated or synchronized honestly |
 | 8 | New document fits selection conditions | Metadata/kind tests and static shipped Bases predicates | Adapted document has required properties/path; actual renderer remains separate |
 | 9 | Markdown works without Obsidian | Relative links/ordinary Markdown; no GUI dependency in tests | Clean executor navigates docs as files; no GUI acceptance claim |
-| 10 | Relocation keeps resources | Synthetic six-skill and full actual pack copied to Cyrillic/space path; CLI resolves `__file__` | Final complete-pack relocation check after integration; client use is separate |
+| 10 | Relocation keeps resources | Synthetic seven-skill and full actual pack copied to Cyrillic/space path, including six source-byte snapshots and new routes; CLI resolves `__file__` | Final complete-pack relocation check after integration; client use is separate |
 | 11 | Assumptions do not become accepted facts | Placeholder/status/type rejection; fixture tasks require draft/proposed | Human reviews semantic claims; checker cannot know truth of prose |
 | 12 | Portable pack has no source-project/private baggage | Finite static path/project/citation sentinel test | Integrated package/ZIP content review, no source env/logs/history copied |
 
