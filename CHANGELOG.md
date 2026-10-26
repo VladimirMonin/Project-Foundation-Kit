@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.4.0 · 2026-10-26
+
+- Complete the byte-exact Command-first 00–07 and FigCraft I–III/workbook/README library: seven additions, two explicitly updated editions, four unchanged originals. Preserve prior editions in Git history and update the single provenance map.
+- Select visual reference, chosen prototype transitions or real interface before platform acceptance. Add a Django route without imposing React; keep common GUI execution/lifecycle guidance conditional and preserve Qt/React specifics.
+- Strengthen compatibility, parameter presence, artifact ownership, partial/unknown effects, intermediate observations and actual-delivery checks in existing methods and forms; do not create a new backend or evaluation engine.
+- Add three requested skills: pf-retrospective, read-only pf-memory-inventory with a version-bound Pi route, and pf-caveman for clear explanations. Keep provider operations, global profiles and application execution outside this release.
+- Update the exact ten-skill checker contract, thirteen source snapshots, relocation/link controls and finite application definitions. Report precisely allowlisted missing historical research as `link.source_not_shipped: not_checked`, never as a verified link.
+- Retain ECC/UIZZE MIT notices and the Caveman Apache-2.0 license plus applicable notices. Structural/source/package checks do not establish GUI, model behavior, live-memory inventory or automatic client discovery; see [ACCEPTANCE](docs/ACCEPTANCE.md).
+
 ## 0.2.1 · 2026-10-22
 
 - Link both companion projects without duplicating their versions or implying automatic installation.

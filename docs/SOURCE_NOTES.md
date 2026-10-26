@@ -37,6 +37,34 @@ design, not a delivered application. Publication does not promote source metadat
 accepted project facts. Real-development application of this addition is left to the
 user; source integrity, package checks and independent review are separate evidence.
 
+## Extended library and additional procedures, 0.4.0
+
+The current direct request extends the supplied plan with three additional skills;
+its older seven-skill-only limit is therefore replaced by the explicit ten-name
+contract. The original seven remain. All thirteen current source documents are
+byte-exact: seven additions, new editions of Command-first 00/01, and four unchanged
+originals. The original input plan, import receipt and local source paths are not
+public payload. Current source hashes remain owned by [UPSTREAM](../pack/UPSTREAM.md).
+
+The supplied continuation articles and workbook inform the thin procedural layer.
+Django guidance summarizes linked official documentation for a named version, not
+a copied manual or a tested website. Historical primary research reports referenced
+by CF05–07 are not imported; precisely bound `not_checked` diagnostics do not turn
+their links into available evidence or relax ordinary boundaries.
+
+The retrospective reuses PFK lifecycle/quality rather than importing a personal
+weekly-review workflow. Memory inventory selectively reworks the Pi memory-ops
+procedure into a read-only scope and checks technical references against the
+official @samfp/pi-memory 1.6.1 README. No private memory, operational journals,
+plugin implementation, local patches or mutation scripts are included. Its version
+is a reference boundary, not a required installation or a live-provider test.
+
+The clear-explanation skill is a changed PFK adaptation of the Russian Caveman
+procedure and the pinned JuliusBrussee/caveman voice rules. Upstream Apache-2.0,
+relevant NOTICE attribution and the retained pre-3.0 MIT notice are preserved in the
+portable package. No Caveman runtime, hooks, CLI, fonts or mode persistence is
+provided. Exact source/recipient and license details remain in UPSTREAM/notices.
+
 ## Distribution
 
-No private source paths, personal contacts, session records, environment files, databases, logs or source-product code are included. No complete third-party skill package is redistributed; selected adapted portions retain the notices above. The owner's material is distributed under [MIT](../LICENSE); linked products and primary React/W3C/Qt documentation retain their own licenses. Those technical docs are references and original summaries, not bulk copied text/code/assets. MIT ECC does not relicense Qt documentation.
+No private source paths, personal contacts, session records, environment files, databases, logs or source-product code are included. No complete third-party skill package is redistributed; selected adapted portions retain their notices. The owner's material is distributed under [MIT](../LICENSE), with the Caveman adaptation retaining its separate [Apache-2.0 license](../pack/skills/pf-caveman/LICENSE) and applicable notices. Linked products and primary Django/React/W3C/Qt documentation retain their own licenses. Those technical docs are references and original summaries, not bulk copied text/code/assets. MIT ECC does not relicense Qt documentation.
