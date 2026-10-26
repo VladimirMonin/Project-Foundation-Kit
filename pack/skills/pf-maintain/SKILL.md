@@ -2,8 +2,8 @@
 name: pf-maintain
 description: Maintain project knowledge after a bounded change. Update or create documents and owner instructions, preserve history, repair navigation and check metadata without silently changing policy. Use for documentation impact, stale contracts, instruction sync or archival work, not product implementation or a whole-corpus audit.
 metadata:
-  version: "0.2.0"
-  updated: "2026-10-21"
+  version: "0.4.0"
+  updated: "2026-10-26"
 ---
 
 # Maintain affected knowledge
@@ -43,6 +43,10 @@ as guidance, not permission to replace local policy.
 4. Write only the affected durable delta. Synchronizing an accepted owner/command is
    not permission to change expenses, access, safety, release rules or independent
    review. Surface such a conflict to the policy owner and continue independent work.
+   For an explicitly changed scope follow
+   [lifecycle's history rule](../../references/lifecycle.md#изменённый-объём-и-история):
+   preserve the old failure and its criterion, distinguish removal from repair,
+   and apply the authorized new requirement without asking for the same decision again.
 5. Repair nearest entry/catalog and actual client route where in scope. A link is
    not proof of automatic injection. On replacement preserve origin, replacement
    scope, outstanding obligations and historical evidence via the
@@ -62,6 +66,12 @@ as guidance, not permission to replace local policy.
    Promote useful temporary conclusions into the knowledge owner, not an entire run log.
 
 ## Missing input / stop
+
+For a bounded analysis of completed or paused work, use
+[pf-retrospective](../pf-retrospective/SKILL.md) only when lessons are needed. That
+read-only analysis does not resume the task or change instructions/memory. Accepted
+lessons may become inputs to this skill's separately authorized, bounded maintenance;
+do not copy a run journal into durable rules or create a mandatory retrospective stage.
 
 Ask one specific question only when an unresolved ownership/policy decision blocks
 the affected action. For missing technical facts do one bounded source lookup, not

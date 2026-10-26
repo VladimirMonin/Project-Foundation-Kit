@@ -12,6 +12,8 @@ summary: "{{user_result_and_bounded_design_scope}}"
 > Автору: необязательная форма самостоятельного долговечного решения; малой задаче
 > достаточно раздела существующего плана. Статус текста не готовность UI. Заполнить
 > существенные поля, удалить неприменимое и рамку, пересчитать ссылки от результата.
+> Глубина, вид работы, направление, платформа и инструмент независимы; это строки
+> задачи, не пять новых паспортов. Приложение платформы не расширяет заказ макета.
 > Метод: [pf-ui-design](../../skills/pf-ui-design/SKILL.md); свидетельства — существующая
 > [verification-форма](verification.md.tmpl), не второй UI-registry.
 
@@ -19,7 +21,12 @@ summary: "{{user_result_and_bounded_design_scope}}"
 
 {{user_job_primary_action_and_link_to_source_requirement}}
 {{current_vs_proposed_behavior_and_design_implementation_or_review_mode}}
+{{result_depth_visual_reference_or_selected_prototype_or_real_ui}}
+{{direction_app_to_design_new_design_design_to_code_or_local_change}}
+{{finite_surfaces_meaningful_states_and_explicitly_selected_transitions}}
 {{platform_surface_owner_constraints_and_non_goals}}
+{{chosen_tool_if_any_and_existing_permissions_without_new_authority}}
+{{preserved_product_capabilities_values_languages_themes_and_constraints}}
 
 ## Принятое окружение
 
@@ -32,21 +39,28 @@ summary: "{{user_result_and_bounded_design_scope}}"
 {{information_hierarchy_layout_and_reason}}
 {{content_density_long_labels_focus_keyboard_and_applicable_accessibility}}
 
-| Состояние / переход | Триггер | Обратная связь | Безопасное действие |
-|---|---|---|---|
-| {{relevant_state}} | {{trigger}} | {{visible_result}} | {{next_action}} |
+| Состояние / переход | Триггер | Обратная связь | Безопасное действие | Показывается / исполняется и где |
+|---|---|---|---|---|
+| {{relevant_state}} | {{trigger}} | {{visible_result}} | {{next_action}} | {{prepared_state_rule_selected_prototype_action_or_real_operation}} |
 
 {{cancellation_retry_stale_result_and_existing_owner_only_when_applicable}}
 {{inapplicable_states_reason_distinct_from_unavailable_test_access}}
+{{representative_language_theme_size_variants_and_required_combinations_not_full_cartesian_catalog}}
+{{synthetic_example_values_distinct_from_measured_facts}}
 
 ## Проверяемые критерии и наблюдения
 
-{{bounded_behavior_rendered_interaction_source_and_native_or_browser_checks}}
+{{finish_predicates_for_selected_depth_editable_states_plus_render_selected_transitions_or_actual_ui_outcomes}}
+{{mandatory_mockup_render_distinct_from_conditional_native_or_browser_application_checks}}
+{{source_rendered_interaction_behavior_evidence_only_for_applicable_claims}}
 {{existing_check_commands_or_explicitly_unknown_not_invented}}
 {{actual_artifact_revision_conditions_observations_or_not_run_limits}}
+{{required_not_run_vs_outside_scope_vs_branch_not_reached}}
+{{explicit_scope_change_owner_and_preserved_prior_failure_if_any}}
 
 ## Внедрение и знания
 
 {{authorized_ui_change_scope_and_contract_dependencies}}
+{{design_revision_real_nodes_components_assets_layout_rules_and_known_implementation_links_if_handoff_needed}}
 {{affected_guides_or_no_guide_impact_reason}}
 {{remaining_decision_owner_local_acceptance_policy_or_finished_scope}}

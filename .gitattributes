@@ -1,7 +1,16 @@
-# Keep the six supplied reference snapshots byte-identical on every checkout.
+# Keep the thirteen supplied reference snapshots byte-identical on every checkout.
 pack/references/architecture/command-first/00_README.md -text
 pack/references/architecture/command-first/01_Command_First_Introduction.md -text
 pack/references/architecture/command-first/02_Command_First_Architecture_and_Contracts.md -text
 pack/references/architecture/command-first/03_Command_First_Architecture_Variants.md -text
 pack/references/architecture/command-first/04_Command_First_Image_Converter_Architecture.md -text
+pack/references/architecture/command-first/05_Command_First_Live_GUI_Backend.md -text
+pack/references/architecture/command-first/06_Command_First_Contracts_Compatibility_and_Effects.md -text
+pack/references/architecture/command-first/07_Command_First_Verification_and_Delivery.md -text
 pack/references/ui/figcraft/FigCraft_AI_GUI_Design_Guide_RU.md -text
+pack/references/ui/figcraft/README.md -text
+pack/references/ui/figcraft/FigCraft_Practice_Part_2_RU.md -text
+pack/references/ui/figcraft/FigCraft_Practice_Part_3_RU.md -text
+pack/references/ui/figcraft/FigCraft_Practical_Workbook_RU.md -text
+# Preserve the complete upstream Apache-2.0 license as well.
+pack/skills/pf-caveman/LICENSE -text

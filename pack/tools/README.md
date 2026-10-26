@@ -44,7 +44,7 @@ symlinks, missing/unreadable/не-UTF-8 или >1 MiB text input дают **exit
   проверяются. YAML anchors/aliases/merge keys запрещены общей схемой. Смена словаря
   требует согласованного обновления metadata.md и checker-а, не локальной поблажки.
 - `native`: AGENTS и обычные package references не получают authoring-паспорт.
-  Это относится и к шести сохранённым оригиналам command-first/FigCraft: их исходная
+  Это относится и ко всем 13 сохранённым оригиналам command-first/FigCraft: их исходная
   YAML-шапка остаётся нативной частью справки, а не принятой PFK-архитектурой.
   `SKILL.md` независимо проверяет native name/description/optional metadata и
   совпадение каталога. `.yaml/.yml` — safe parse, `.base` — только YAML shape views/
@@ -77,6 +77,42 @@ autolinks и renderer-specific anchors остаются вне гарантии;
 `not_checked`. External URLs считаются, но сеть не запускается. Для переносимого
 пакета используйте простые относительные Markdown-ссылки.
 
+### Непоставленные исторические исследования
+
+`link.source_not_shipped` имеет уровень **not_checked**, не успешной проверки ссылки.
+Это фиксированная политика **только `--pack`**: совпадают точный root-relative путь
+оригинала, SHA-256 **сырых байтов** выбранной редакции и буквальная относительная цель.
+Префикса `pack/` в ключе нет. Таблица ниже задаёт 13 пар, а не исключение по basename:
+
+| Точный путь от root пакета | Буквальные цели |
+|---|---|
+| `references/architecture/command-first/05_Command_First_Live_GUI_Backend.md` | `COMMAND_FIRST_PRACTICE.md`; `01-core-cli-and-command-first.md`; `02-design-to-code.md`; `01-command-first-and-scope.md` |
+| `references/architecture/command-first/06_Command_First_Contracts_Compatibility_and_Effects.md` | `COMMAND_FIRST_PRACTICE.md`; `01-core-cli-and-command-first.md`; `01-command-first-and-architecture.md`; `01-command-first-and-scope.md` |
+| `references/architecture/command-first/07_Command_First_Verification_and_Delivery.md` | Все пять буквальных целей из первых двух строк |
+
+Ожидаемые digest закреплены в коде и независимых тестах по
+[карте происхождения](../UPSTREAM.md); это не настраиваемый язык ignore-правил.
+Смена даже одного байта, BOM/концов строк, пути или destination лишает ссылку
+исключения. `./`, percent-encoding, query/fragment или другое написание не получают
+разрешение через нормализованную цель. В `--project` те же отсутствующие исследования
+остаются `link.missing: error`.
+
+Сначала действуют прежние absolute/root/traversal/symlink-проверки. Исключение
+рассматривается **только при действительно отсутствующей цели** после этих границ.
+Существующая цель проходит обычные проверки, включая parsed-selection/anchor;
+её содержимое не читается вне явного corpus. Pack с symlink во входах по-прежнему
+отклоняется как input failure, а не пропускает такой объект ради библиографии.
+Обычные статьи 05–07, Django-справка и остальные ресурсы не исторические исключения:
+их удаление сохраняет обычный `link.missing`.
+
+Каждое употребление разрешённой отсутствующей ссылки отражается в JSON: текущие
+13 пар дают 184 `link.source_not_shipped`, а не 184 разных исследования. Это не
+сетевой fetch, подтверждение содержания, доступности или новой приёмки источника.
+[Библиографическая рамка](../references/architecture/command-first/README.md)
+объясняет область этих оснований. Исключение непрозрачных библиографических
+маркеров исходной статьи 04 в конечном privacy-тесте независимо, не меняется и
+не распространяется на 05–07.
+
 Для `kind: guide` нужны language и source_revision основной версии. Перевод имеет
 свой ID, translation_source=ID выбранного primary guide и translation_source_revision.
 Source/translation одного языка или ссылка на самого себя ошибочны. У перевода
@@ -97,12 +133,13 @@ path/code/severity/message, `translations`, `external_links_not_checked`, `limit
 - **1** — ошибки выбранных документов; исправить свою действительную delta.
 - **2** — input/dependency/usage failure; не считать пустым успехом.
 
-`--pack` проверяет ровно семь именованных навыков: `pf-bootstrap`, `pf-plan`, `pf-maintain`,
-`pf-quality`, `pf-guides`, `pf-ui-design`, `pf-command-first`, их name/resource links, native
+`--pack` проверяет ровно десять именованных навыков: `pf-bootstrap`, `pf-plan`, `pf-maintain`,
+`pf-quality`, `pf-guides`, `pf-ui-design`, `pf-command-first`, `pf-retrospective`,
+`pf-memory-inventory`, `pf-caveman`, их name/resource links, native
 Markdown и `.base`, наличие/UTF-8 templates. Отсутствие любого именованного каталога
 или его `SKILL.md`, лишний каталог либо подмена имени дают exit2.
 
-Контрольные суммы шести оригиналов, сохранность полного payload при переносе и
+Контрольные суммы 13 оригиналов, сохранность полного payload при переносе и
 конечный набор wiki-целей/заголовков серии проверяют отдельные тесты репозитория,
 не новый режим checker-а. Оригиналы выбираются по
 [карте command-first](../references/architecture/command-first/README.md) и

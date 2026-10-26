@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -23,6 +24,23 @@ OPTIONAL_TEXT = ("read_when", "owner", "release_owner", "language", "source_revi
 CLASSES = {"authoring", "native", "templates"}
 TEXT_SUFFIXES = (".md", ".md.tmpl", ".yaml", ".yml", ".yaml.tmpl", ".base")
 TOKEN = re.compile(r"\{\{[^{}\n]+\}\}")
+# Pack-only historical bibliography: exact root-relative path, raw bytes and
+# literal missing destination. This is not a general ignore list or provenance map.
+SOURCE_NOT_SHIPPED = {
+    "references/architecture/command-first/05_Command_First_Live_GUI_Backend.md": (
+        "b7d66ff505fd8ab20ac9c129c809f51d3a69196126fb2e5b5d06eaa494d1ea98",
+        {"COMMAND_FIRST_PRACTICE.md", "01-core-cli-and-command-first.md",
+         "02-design-to-code.md", "01-command-first-and-scope.md"}),
+    "references/architecture/command-first/06_Command_First_Contracts_Compatibility_and_Effects.md": (
+        "641950c0a6f488c91cc0aaed56c80f8d340542b6a97e7e791fed5bf3f05f3704",
+        {"COMMAND_FIRST_PRACTICE.md", "01-core-cli-and-command-first.md",
+         "01-command-first-and-architecture.md", "01-command-first-and-scope.md"}),
+    "references/architecture/command-first/07_Command_First_Verification_and_Delivery.md": (
+        "f75e0eb3c8506d5484838997c23c631263e9001aa28c1248c48606846e557e31",
+        {"COMMAND_FIRST_PRACTICE.md", "01-core-cli-and-command-first.md",
+         "02-design-to-code.md", "01-command-first-and-architecture.md",
+         "01-command-first-and-scope.md"}),
+}
 
 
 class InputError(ValueError):
@@ -167,7 +185,7 @@ def local_links(text):
                if syntax[m.start()] != " "]
     missing = []
     for match in re.finditer(r"!?\[([^\]\n]+)\]\[([^\]\n]*)\]", text):
-        if syntax[match.start()] == " ":
+        if syntax[match.start()] == " " or match[1].startswith("^"):
             continue
         key = (match[2] or match[1]).casefold()
         if key in definitions:
@@ -200,6 +218,7 @@ class Checker:
         self.root, self.corpus, self.mode = root, corpus, mode
         self.findings, self.docs, self.bodies, self.translations = [], {}, {}, []
         self.checked, self.external_links = 0, 0
+        self.source_snapshots = set()
 
     def add(self, path, code, message, severity="error"):
         self.findings.append(dict(path=path, code=code, severity=severity, message=message))
@@ -282,6 +301,9 @@ class Checker:
             if path.endswith(".tmpl"):
                 raise InputError("Template inputs must be explicitly classified as templates")
             text = read_text(file)
+            policy = SOURCE_NOT_SHIPPED.get(path) if self.mode == "pack" else None
+            if policy and hashlib.sha256(file.read_bytes()).hexdigest() == policy[0]:
+                self.source_snapshots.add(path)
             self.checked += 1
             try:
                 if path.endswith(".base"):
@@ -380,7 +402,10 @@ class Checker:
                 target = candidate.resolve()
                 target_name = target.relative_to(self.root).as_posix()
                 if not target.exists():
-                    self.add(path, "link.missing", f"Missing local target: {target_name}")
+                    if path in self.source_snapshots and value in SOURCE_NOT_SHIPPED[path][1]:
+                        self.add(path, "link.source_not_shipped", f"Historical source not shipped: {value}", "not_checked")
+                    else:
+                        self.add(path, "link.missing", f"Missing local target: {target_name}")
                 elif parts.fragment:
                     if target_name not in self.bodies:
                         self.add(path, "link.anchor_scope", f"Anchor outside parsed selection: {target_name}", "not_checked")
@@ -432,10 +457,10 @@ def pack_corpus(root):
         if file.is_file() and relative.endswith(TEXT_SUFFIXES):
             bounded(root, relative)
             result[relative] = "templates" if relative.endswith(".tmpl") else "native"
-    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design", "pf-command-first"}
+    expected = {"pf-bootstrap", "pf-plan", "pf-maintain", "pf-quality", "pf-guides", "pf-ui-design", "pf-command-first", "pf-retrospective", "pf-memory-inventory", "pf-caveman"}
     actual = {p.name for p in (root / "skills").iterdir() if p.is_dir()}
     if actual != expected or any(not (root / "skills" / name / "SKILL.md").is_file() for name in expected):
-        raise InputError("Pack needs exactly the seven named pf-* skill directories and their SKILL.md")
+        raise InputError("Pack needs exactly the ten named pf-* skill directories and their SKILL.md")
     return result
 
 

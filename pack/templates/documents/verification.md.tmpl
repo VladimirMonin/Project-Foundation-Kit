@@ -6,6 +6,9 @@ Copy payload only; fill [metadata](../../references/metadata.md). Essential: exa
 subject/identity, method, real results/limits, verdict scope and remaining action.
 Remove irrelevant platform/artifact columns, not unknown/unrun distinctions. No
 reviewer-of-reviewer chain; this form grants neither execution nor commit authority.
+Use only applicable rows/sections; an unknown mandatory fact is not N/A. Evidence
+meaning belongs to [quality](../../references/quality.md), agreed delivery transitions
+to [artifact-delivery](../../references/methods/artifact-delivery.md).
 
 ## Payload
 
@@ -26,23 +29,39 @@ summary: "{{actual_verdict_scope_and_material_limit}}"
 ## Subject and method
 
 {{requirement_scenario_and_exact_source_artifact_or_profile_identity}}
+{{selected_ui_result_depth_and_finite_states_or_remove}}
 {{who_checked_what_independently_and_regression_strategy}}
 {{authorized_inputs_data_isolation_and_exclusions}}
 
 ## Actual results
 
-| Check / command | Raw exit / observed outcome | Evidence / limit |
-|---|---|---|
-| {{actual_check}} | {{actual_exit_or_not_run_cancelled_blocked}} | {{accessible_evidence_and_what_is_not_proved}} |
+| Check / command / expected claim | Raw verifier / product exits | Reached branch and claim result | Operation outcome / known effects | Evidence / limit |
+|---|---|---|---|---|
+| {{actual_check_and_expectation}} | {{raw_exits_or_not_run_cancelled_blocked}} | {{reached_boundary_confirmed_refuted_unknown_or_unreached}} | {{success_refusal_partial_cancelled_and_effect_knowledge_or_not_applicable}} | {{accessible_evidence_and_what_is_not_proved}} |
 
 {{written_vs_executed_skipped_cancelled_distinctions}}
 {{static_unit_integration_real_user_path_and_visual_proof_are_not_interchangeable}}
+{{intermediate_observation_schedule_and_actual_boundary_or_remove}}
+{{expected_nonzero_product_exit_and_nested_result_distinctions_or_remove}}
 
 ## Findings and verdict
 
 {{required_findings_with_contract_path_impact_and_correction_or_none}}
 {{accepted_scope_or_rejected_blocked_not_proven_with_reason}}
+{{authorized_scope_change_with_basis_and_original_failure_preserved_or_remove}}
 {{documentation_instruction_scenario_guide_translation_impact_or_justified_none}}
+
+## Delivery — only agreed transitions
+
+| Transition | Exact identity / actual state | Evidence / open obligation |
+|---|---|---|
+| Accepted source and actual build inputs | {{accepted_revision_vs_working_bytes_and_build_inputs}} | {{source_to_artifact_basis}} |
+| Concrete package / archive / bundle | {{complete_artifact_identity_and_inventory}} | {{artifact_evidence}} |
+| Execution of the delivered form | {{actual_package_path_and_environment_or_not_run}} | {{useful_result_readback_and_limits}} |
+| Local commit | {{actual_commit_or_not_committed}} | {{accepted_bytes_vs_saved_bytes}} |
+| Remote ref | {{exact_remote_ref_and_commit_or_not_published}} | {{remote_readback}} |
+| Release asset / handoff | {{exact_asset_or_received_set_or_not_delivered}} | {{received_bytes_readback}} |
+| Installed state | {{actual_install_and_loaded_origin_or_not_run}} | {{installed_path_evidence}} |
 
 ## Save, remainder and stop
 
