@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### 0.5.1
+
+- Reconcile a late failure with the repaired candidate and applicable proof of the same requirement; a different candidate alone neither reopens a defect nor proves it closed. Preserve the original failure.
+- Scope deliberately cleared UI selection to the user's actual context. Let the accepted product contract decide whether query/tab/folder/resource navigation retains that scope or starts another.
+- Route both testing forms to a real existing project section regardless of filename/heading, or to the installed package's quality rules by their actual path. Do not require a new quality document.
+- Activate design-boundaries for meaningful responsibility/contract/guarantee/consumer-duty changes, not the mere addition of a local DTO or helper; retain the seven-step method.
+- Qualify the call-count warning by the result/effect it cannot establish. Refine only existing AD-23, AD-31 and AD-32; no new skills, dependencies, mandatory documents or executed model/GUI claims.
+
 ## 0.5.0 · 2026-10-29
 
 - Define simplicity as minimum sufficient whole-solution complexity. Add two conditional methods for justified design boundaries and explicitly requested complexity reduction; preserve useful adapters, real guarantees and the receiving project's architecture.
