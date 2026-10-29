@@ -1,4 +1,4 @@
-# Project Foundation Kit · 0.4.0
+# Project Foundation Kit · 0.5.0
 
 Самостоятельный методический комплект для инженерных решений, проверки поведения, сопровождения знаний и проектирования интерфейсов. Это не архив исходного продукта, не runtime framework и не автоматический менеджер слияния. Переносится **весь этот каталог**, вместе с `skills/`, `references/`, `templates/`, `integrations/` и поставляемыми `tools/`.
 
@@ -34,6 +34,8 @@
 - [quality](references/quality.md): уровни доказательства, проверки и ограничения инструмента.
 
 При подходящей задаче: [эволюция контрактов](references/methods/contract-evolution.md), [влияние изменения](references/methods/change-impact.md), [поведенческая регрессия](references/methods/behavior-regression.md), [проверка конкретной поставки](references/methods/artifact-delivery.md). UI выбирает ограничения фактической платформы: [Django](skills/pf-ui-design/references/web-django.md), [React](skills/pf-ui-design/references/web-react.md) или [PySide6](skills/pf-ui-design/references/desktop-pyside6.md), не все сразу. Связь живого интерфейса с выполнением разбирается в [gui-runtime](skills/pf-ui-design/references/gui-runtime.md) только при соответствующей задаче.
+
+Для новой или существенно меняемой границы — [design-boundaries](references/methods/design-boundaries.md); для прямо заказанного упрощения либо проверки заявления о нём — [complexity-reduction](references/methods/complexity-reduction.md). Обычная правка не активирует эти методы. [Содержательность теста](references/quality.md#содержательность-теста) остаётся у общего владельца качества, без отдельного тестового навыка или обязательного мутационного прогона.
 
 Философия объясняет причины/компромиссы; инструкция — действия по trigger; шаблон — форму; навык — применение; заполненный принятый документ принадлежит проекту. Принятый план не реализованная функция, дата текста не проверка кода, green Markdown не product PASS.
 

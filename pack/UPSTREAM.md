@@ -1,4 +1,4 @@
-# Происхождение процедур и библиотеки знаний · PFK 0.4.0
+# Происхождение процедур и библиотеки знаний · PFK 0.5.0
 
 Это каноническая карта адаптации, переносимая вместе с pack. Выбранные процедуры
 переведены и содержательно переработаны, **не написаны «с нуля»**. Полные сторонние
@@ -129,6 +129,96 @@ Obsidian-ссылки оставлены вместе с обычной Markdown
   [полный Apache-2.0 LICENSE](skills/pf-caveman/LICENSE), относящаяся атрибуция
   upstream NOTICE и retained MIT notice в [уведомлениях](THIRD_PARTY_NOTICES.md).
   Лицензия не означает спонсорство или передачу прав на товарные знаки.
+
+## Инженерные дополнения · 0.5.0
+
+Это выборочная содержательная переработка перечисленных материалов, не копия
+донорских навыков или их обязательного процесса. Пути получателей относительны
+pack. Короткие переходы из навыков и форм ведут к одному владельцу правила:
+[design-boundaries](references/methods/design-boundaries.md),
+[complexity-reduction](references/methods/complexity-reduction.md) или
+[quality](references/quality.md). Изменённый перевод не объявляется независимым
+происхождением. Полные применимые MIT notices сохранены в
+[THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md).
+
+### Архитектурные границы и уменьшение механизма
+
+| Автор, фиксированная редакция и exact donor paths | Получатель / принято | Уточнено или исключено |
+|---|---|---|
+| **Matt Pocock**, `mattpocock/skills`, `59db609eb1e18aaf59b63284d0e52255aff0c63c`: [skills/engineering/codebase-design/SKILL.md](https://github.com/mattpocock/skills/blob/59db609eb1e18aaf59b63284d0e52255aff0c63c/skills/engineering/codebase-design/SKILL.md), [DEEPENING.md](https://github.com/mattpocock/skills/blob/59db609eb1e18aaf59b63284d0e52255aff0c63c/skills/engineering/codebase-design/DEEPENING.md) | design-boundaries, quality, формы философии/архитектуры; цена интерфейса включает обязанности потребителя, предметное знание локализовано, тест и клиент используют один производственный путь | Мысленное встраивание сохраняет поведение. Число адаптеров не критерий; полезные unit-тесты не удаляются автоматически; постоянная зависимость не передаётся каждому вызову только ради теста |
+| **Paul Hammond (citypaul)**, `.dotfiles`, `cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0`: [claude/.claude/skills/codebase-design/SKILL.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/codebase-design/SKILL.md), [references/deepening.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/codebase-design/references/deepening.md), [references/design-it-twice.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/codebase-design/references/design-it-twice.md) | design-boundaries, quality, философская/архитектурная формы; связная ответственность, полезные тонкие адаптеры, доверие/отказы/транзакция/ресурс, ограничения подмен; два разных варианта на одинаковых сценариях для дорогого решения | Не переносятся весь workflow, обязательные параллельные агенты, отчёты/ADR для каждой функции, универсальный диспетчер, обязательный mutation gate и навязывание портов/адаптеров любому приложению |
+| **Adam Bulmer (mintuz)**, `skills`, `d698a88fc1e4d054a25e5919f15658f673f602cb`: [plugins/core/skills/reducer/SKILL.md](https://github.com/mintuz/skills/blob/d698a88fc1e4d054a25e5919f15658f673f602cb/plugins/core/skills/reducer/SKILL.md) | complexity-reduction, change-impact, философская форма; согласованное поведение, вся цепочка потребителей, отдельные проверки поведения и действительно удалённого механизма | Нет искусственного числового балла, обязательного ledger/report-файла или обещания математической эквивалентности по конечным тестам |
+| **Paul Hammond (citypaul)**, `.dotfiles`, та же редакция `cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0`: [claude/.claude/skills/reduce-system-complexity/SKILL.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/reduce-system-complexity/SKILL.md) | complexity-reduction, change-impact, behavior-regression/quality и философская форма; только выбранный путь, отдельное решение спорного поведения, сравнение всей цепочки, миграционный мост не равен завершённому упрощению | Нет обязательного RED для сохранения поведения, нового реестра, runtime или автоматического запуска после каждой задачи; перенос сложности к потребителям не считается её удалением |
+| `microsoft/agentic-loops`, `52cbe7a51a9965423517a963e226d6a933332b1c`: [skills/yagni/SKILL.md](https://github.com/microsoft/agentic-loops/blob/52cbe7a51a9965423517a963e226d6a933332b1c/skills/yagni/SKILL.md); фактический MIT holder — **Mr. Das** | design-boundaries, change-impact, философская форма; неспекулятивное решение задачи, сохранение местных конвенций и необходимая связная дельта | Владелец репозитория не подменяет copyright. Не приняты запрет любой абстракции с одним использованием, размер файла как критерий качества и запрет необходимой сопряжённой правки |
+| **Yonatan Karp-Rudin**, `yonatankarp/software-design-skills`, `e312055086e1e377dcd5c666e6a0f5c6255b869e`: [plugins/architecture-patterns/skills/arch-fitness-functions/SKILL.md](https://github.com/yonatankarp/software-design-skills/blob/e312055086e1e377dcd5c666e6a0f5c6255b869e/plugins/architecture-patterns/skills/arch-fitness-functions/SKILL.md) | design-boundaries, архитектурная форма; конкретное принятое ограничение зависимостей и проверка нарушающего/допустимого случая | Нет собственного анализатора, универсального числа слоёв, автоматически устанавливаемого инструмента или утверждения, что static анализ доказал всё runtime-соединение |
+
+Короткие маршруты: [pf-plan](skills/pf-plan/SKILL.md),
+[pf-command-first](skills/pf-command-first/SKILL.md),
+[pf-quality](skills/pf-quality/SKILL.md); формы
+[философии](templates/foundation/project-philosophy.md.tmpl) и
+[архитектуры](templates/foundation/architecture-principles.md.tmpl).
+Они интегрируют положения к общему канону, не создают отдельные наборы правил.
+
+**Проверенная линия citypaul.** Его
+[root LICENSE](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/LICENSE)
+содержит MIT Paul Hammond и приоритет вложенных уведомлений.
+[codebase-design/LICENSE](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/codebase-design/LICENSE)
+и [source-notes.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/codebase-design/references/source-notes.md)
+сохраняют MIT Matt Pocock и называют точного предка
+`66898f60e8c744e269f8ce06c2b2b99ce7660d5f`:
+[SKILL.md](https://github.com/mattpocock/skills/blob/66898f60e8c744e269f8ce06c2b2b99ce7660d5f/skills/engineering/codebase-design/SKILL.md),
+[DEEPENING.md](https://github.com/mattpocock/skills/blob/66898f60e8c744e269f8ce06c2b2b99ce7660d5f/skills/engineering/codebase-design/DEEPENING.md),
+[DESIGN-IT-TWICE.md](https://github.com/mattpocock/skills/blob/66898f60e8c744e269f8ce06c2b2b99ce7660d5f/skills/engineering/codebase-design/DESIGN-IT-TWICE.md)
+и [LICENSE](https://github.com/mattpocock/skills/blob/66898f60e8c744e269f8ce06c2b2b99ce7660d5f/LICENSE).
+Этот прочитанный предок не подменяет текущий прямой источник Matt в таблице.
+[reduce-system-complexity/LICENSE](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/reduce-system-complexity/LICENSE)
+и [source-notes.md](https://github.com/citypaul/.dotfiles/blob/cd4028d57d6e4e95814f7b8ee55ca13c23a9c2f0/claude/.claude/skills/reduce-system-complexity/references/source-notes.md)
+сохраняют MIT Adam Bulmer для того же зафиксированного reducer. В уведомлениях PFK
+сохранены обе линии: Paul и соответствующий предок, с областью вложенной лицензии.
+Имена John Ousterhout и Michael Feathers в концептуальной линии не разрешают
+копирование их книг; книги не включены и не объявлены MIT.
+
+### Содержательность тестов и конечные проверочные случаи
+
+**Jesse Vincent**, `obra/superpowers`, `2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`:
+
+| Exact donor path | Получатель / принято | Уточнено или исключено |
+|---|---|---|
+| [skills/test-driven-development/writing-good-tests.md](https://github.com/obra/superpowers/blob/2ce8aa15d05bd57213e6f746f953aafb7ded7a8b/skills/test-driven-development/writing-good-tests.md) | quality, behavior-regression, формы [стратегии](templates/foundation/testing-strategy.md.tmpl) и [инструкции](templates/instructions/testing.md.tmpl); конкретный отвергаемый дефект, независимое ожидание, минимальная настоящая граница, подмены вне предмета проверки | Вызов/порядок и точный текст допустимы, когда это контракт; реальное владение ресурсом не удаляется потому, что его первым проверил тест. Нет общего запрета unit-тестов, RED для любых документов или тестовых production-путей |
+| [skills/writing-skills/SKILL.md](https://github.com/obra/superpowers/blob/2ce8aa15d05bd57213e6f746f953aafb7ded7a8b/skills/writing-skills/SKILL.md), [references/testing-skills-with-subagents.md](https://github.com/obra/superpowers/blob/2ce8aa15d05bd57213e6f746f953aafb7ded7a8b/skills/writing-skills/references/testing-skills-with-subagents.md) | Определения AD в разработке PFK: оценивать действия/diff/проверки в независимых контекстах и сопоставимых условиях | Полный baseline-пакет сравнивается с полным candidate, не с отсутствием инструкций. Без запусков — NOT_RUN; нет обязательной новой сети агентов, платных прогонов или обещания превосходства |
+
+Настоящий специальный вход, сохранённый failure при исправлении ошибочного ожидания
+и old/new контракт — решения адаптации PFK, не результаты испытаний донорского runtime.
+[Issue #2092](https://github.com/obra/superpowers/issues/2092) рассмотрен как сообщение
+о возможном неработающем arrange, не нормативный контракт или наше воспроизведение.
+MIT репозитория не объявляется автоматически лицензией текста issue/комментариев;
+их текст не переносится. Отрицательный контроль должен показать реально достигнутую
+границу и содержательное падение, не только мысленную подмену.
+
+### Технические справки и исключённый источник
+
+Следующие документы дают технические факты и ссылки, **не перевод/копию их текста,
+конфигурации или примеров**. Указанные лицензии проверены на точных редакциях;
+лицензия PFK их не заменяет. Инструменты не включены и не запускались.
+
+| Источник / exact path и редакция | Права / использование |
+|---|---|
+| **David Seddon**, Import Linter: [docs/contract_types/forbidden.md](https://github.com/seddonym/import-linter/blob/857ae28bc9cb383ce9c831e7e8345eb9b40667ae/docs/contract_types/forbidden.md), `857ae28bc9cb383ce9c831e7e8345eb9b40667ae`; [LICENSE](https://github.com/seddonym/import-linter/blob/857ae28bc9cb383ce9c831e7e8345eb9b40667ae/LICENSE); [официальная страница](https://import-linter.readthedocs.io/en/stable/contract_types/forbidden/) | **BSD-2-Clause**, не MIT. Упоминание возможного инструмента в design-boundaries; точный deployment SHA страницы stable не установлен и не выдан за SHA main |
+| **Sander Verweij**, dependency-cruiser: [doc/rules-reference.md](https://github.com/sverweij/dependency-cruiser/blob/c5b97371ae93c556c703cfe294af86c9c80ea9fa/doc/rules-reference.md), `c5b97371ae93c556c703cfe294af86c9c80ea9fa`; [LICENSE](https://github.com/sverweij/dependency-cruiser/blob/c5b97371ae93c556c703cfe294af86c9c80ea9fa/LICENSE) | MIT. Ссылка на возможное средство JS/TS, не скопированное правило или новая зависимость |
+| Stryker mutation-testing-elements: [docs/mutant-states-and-metrics.md](https://github.com/stryker-mutator/mutation-testing-elements/blob/4b5b62cc6bf81f23dd9521447131abeb51f895db/docs/mutant-states-and-metrics.md), `4b5b62cc6bf81f23dd9521447131abeb51f895db`; [LICENSE](https://github.com/stryker-mutator/mutation-testing-elements/blob/4b5b62cc6bf81f23dd9521447131abeb51f895db/LICENSE); [официальная страница](https://stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics/) | **Apache-2.0**, не MIT; шаблон copyright в LICENSE не устанавливает имя holder. Справка quality: tool detection/общий score не заменяют содержательный assertion; timeout, import/compile и unreached исходы различаются. PFK не переопределяет формулу самого Stryker |
+| `unclebob/ub-mode`: [SKILL.md](https://github.com/unclebob/ub-mode/blob/57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f/SKILL.md), `57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f`; [README.md](https://github.com/unclebob/ub-mode/blob/57a8bdd28e45ed41900ace0bafa2ff76dd9ed70f/README.md) | **Исключён из переноса выражения:** на этой редакции пригодная лицензия на публикуемую адаптацию не найдена. Только исследовательская ссылка; формулировки, структура и примеры не переводятся/не копируются. Не приняты companion tools, универсальные пороги, уничтожение всех мутантов и журнал каждой операции |
+
+### Адресное UI-дополнение
+
+Предоставленная владельцем рекомендация уточняет причины пустого выбора и поздние
+результаты проверки в [pf-ui-design](skills/pf-ui-design/SKILL.md) и
+[lifecycle](references/lifecycle.md). Это самостоятельные общие формулировки PFK,
+не перенос полного рабочего GUI-навыка или частного приложения. Прямые переходы
+к разделам «Соседние области должны рассказывать одну историю» и
+«Маленькая проверка должна менять только один источник» используют уже поставленную
+[часть II FigCraft](references/ui/figcraft/FigCraft_Practice_Part_2_RU.md#case-a).
+Сами статьи, их байты и исходные права не меняются. Местные роли, пути и приёмы
+конкретных версий приложения не включены; новый визуальный/модельный PASS не заявлен.
 
 ## Первичные технические ссылки, не заимствованный payload
 

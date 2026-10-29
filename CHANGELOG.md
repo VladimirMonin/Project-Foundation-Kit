@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.5.0 · 2026-10-29
+
+- Define simplicity as minimum sufficient whole-solution complexity. Add two conditional methods for justified design boundaries and explicitly requested complexity reduction; preserve useful adapters, real guarantees and the receiving project's architecture.
+- Strengthen the existing quality owner with independent expectations, genuine special inputs, reached boundaries, honest substitution limits and bounded negative controls. Keep one production path; permit evidence-backed correction or removal of mistaken/obsolete tests without inventing RED for behavior-preserving changes.
+- Route planning, command-first and quality skills to those methods; keep exactly ten skills, existing permissions, checker behavior and dependencies. Update only the relevant philosophy, architecture and testing forms, not already adapted consumer documents.
+- Distinguish initial, deliberately cleared and disappeared UI selection. Link directly to the existing whole-screen coherence and single-source component checks; preserve result depth, platform choices and all thirteen byte-exact original articles.
+- Reconcile late verification by run, candidate and requirement, preserving the original failure. Append finite AD-23–AD-33 definitions without claiming model/GUI execution or measured superiority. Source attribution, license notices and actual verification limits remain explicit in [UPSTREAM](pack/UPSTREAM.md) and [ACCEPTANCE](docs/ACCEPTANCE.md).
+
 ## 0.4.0 · 2026-10-26
 
 - Complete the byte-exact Command-first 00–07 and FigCraft I–III/workbook/README library: seven additions, two explicitly updated editions, four unchanged originals. Preserve prior editions in Git history and update the single provenance map.

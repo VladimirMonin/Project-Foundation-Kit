@@ -121,10 +121,17 @@ Populated minimal and UI examples are checked as native/authoring outputs, not
 hidden under templates. Contract, verification and handoff forms are populated as
 draft authoring outputs too. This is grammar evidence, not application or GUI acceptance.
 Additional finite exercises:
-[AD-01–AD-22](ADAPTATION_CASES.md); AD-13–AD-19 cover result depth, Django, effects
+[AD-01–AD-33](ADAPTATION_CASES.md); AD-13–AD-19 cover result depth, Django, effects
 and delivery; AD-20–AD-22 cover retrospective, read-only memory inventory and exact
 Caveman explanations. These are definitions, not executed model trials. Author observations, independently reviewed
 clean applications/comparison and remaining qualification: [ACCEPTANCE](../docs/ACCEPTANCE.md).
+
+Version 0.5.0 appends AD-23–AD-30 for justified boundaries, test usefulness and
+mechanism reduction, and AD-31–AD-33 for selection intent, late verification and
+existing whole-screen/shared-component checks. The original cases and history are
+preserved. These remain NOT_RUN model/GUI definitions, not new executable tests or
+a release requirement to run product code. Existing full-pack relocation includes
+the two new method files because it compares the actual complete payload.
 
 ## Twelve original application obligations — evidence boundary
 

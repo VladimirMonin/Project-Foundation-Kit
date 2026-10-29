@@ -65,6 +65,32 @@ relevant NOTICE attribution and the retained pre-3.0 MIT notice are preserved in
 portable package. No Caveman runtime, hooks, CLI, fonts or mode persistence is
 provided. Exact source/recipient and license details remain in UPSTREAM/notices.
 
+## Engineering and focused UI adaptation, 0.5.0
+
+The two owner-supplied proposals guide a bounded update of the existing kit, not
+an import of donor skill packages. Selected architecture, complexity-reduction,
+test-usefulness and evaluation procedures are translated and substantively adapted
+from Matt Pocock, Paul Hammond (citypaul), Adam Bulmer (mintuz), Jesse Vincent
+(Superpowers), the YAGNI source in microsoft/agentic-loops and Yonatan Karp-Rudin.
+The exact pinned paths, recipients, accepted/rejected positions and genuine lineage
+are recorded once in [UPSTREAM](../pack/UPSTREAM.md). Complete applicable MIT notices
+are preserved in [THIRD_PARTY_NOTICES](../pack/THIRD_PARTY_NOTICES.md), including
+citypaul's predecessor notices. The agentic-loops license names Mr. Das, not the
+repository organization, as its copyright holder.
+
+Import Linter (BSD-2-Clause), dependency-cruiser (MIT) and Stryker documentation
+(Apache-2.0) are technical references, not copied text/configuration examples or
+installed tools. The pinned ub-mode edition has no established suitable license
+for this published adaptation: its expression, structure and examples are excluded.
+The Superpowers issue is a problem report, not our reproduction, an authoritative
+API contract or automatically MIT-licensed issue text; its body is not imported.
+
+The UI delta adds general selection-intent and late-check-result rules and direct
+routes to two existing FigCraft II sections. No original article is rewritten,
+no private GUI skill/application material is bundled, and no new skill or runtime
+dependency is added. New AD definitions do not constitute executed model trials;
+practical qualification remains separate from this documentation/package release.
+
 ## Distribution
 
 No private source paths, personal contacts, session records, environment files, databases, logs or source-product code are included. No complete third-party skill package is redistributed; selected adapted portions retain their notices. The owner's material is distributed under [MIT](../LICENSE), with the Caveman adaptation retaining its separate [Apache-2.0 license](../pack/skills/pf-caveman/LICENSE) and applicable notices. Linked products and primary Django/React/W3C/Qt documentation retain their own licenses. Those technical docs are references and original summaries, not bulk copied text/code/assets. MIT ECC does not relicense Qt documentation.
